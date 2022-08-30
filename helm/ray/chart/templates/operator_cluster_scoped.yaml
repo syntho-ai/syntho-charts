@@ -55,6 +55,8 @@ spec:
         env:
         - name: AUTOSCALER_MAX_NUM_FAILURES
           value: "inf"
+        - name: LICENSE_KEY_SIGNED
+          value: {{ .Values.SynthoLicense }}
         resources:
           requests:
             cpu: 1

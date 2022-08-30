@@ -57,6 +57,8 @@ spec:
               value: "1"
             - name: RAY_SCHEDULER_SPREAD_THRESHOLD
               value: "0.0"
+            - name: LICENSE_KEY_SIGNED
+              value: {{ $.Values.SynthoLicense }}
             ports:
             - containerPort: 6379  # Redis port for Ray <= 1.10.0. GCS server port for Ray >= 1.11.0.
             - containerPort: 10001  # Used by Ray Client

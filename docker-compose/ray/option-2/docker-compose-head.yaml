@@ -1,0 +1,21 @@
+# Ray head docker-compose configuration
+
+version: "3"
+
+services:
+  head:
+    image: ${SYNTHO_RAY_IMAGE}
+    restart: always
+    network_mode: host
+    container_name: ray-head
+    shm_size: 4gb
+    ports:
+      - 8265:8265
+    environment:
+        RAY_SCHEDULER_SPREAD_THRESHOLD: 0.0
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
+    command: >
+      ray start --head --port=6379 --no-monitor --dashboard-host 0.0.0.0 --block --disable-usage-stats

@@ -1,0 +1,12 @@
+# Copyright (c) Jupyter Development Team.
+# Distributed under the terms of the Modified BSD License.
+FROM jupyterhub/jupyterhub:latest
+
+RUN apt update && apt install -yq libpq-dev python3-dev gcc
+
+# Install dockerspawner, oauth, postgres
+RUN pip install --no-cache-dir \
+        oauthenticator \
+        dockerspawner \
+        psycopg2 \
+        jwt

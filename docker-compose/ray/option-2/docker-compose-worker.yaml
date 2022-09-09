@@ -11,6 +11,7 @@ services:
     shm_size: 4gb
     environment:
        RAY_SCHEDULER_SPREAD_THRESHOLD: 0.0
+       LICENSE_KEY_SIGNED: ${LICENSE_KEY}
     ulimits:
       nofile:
         soft: 65536

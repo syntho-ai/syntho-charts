@@ -1,0 +1,135 @@
+version: '3'
+
+services:
+  core:
+    image: ${CORE_IMAGE}
+    restart: on-failure
+    environment:
+      DATABASE_URL: "postgresql+asyncpg://${CORE_DATABASE_USER}:${CORE_DATABASE_PASSWORD}@${CORE_DATABASE_HOST}/${CORE_DATABASE_NAME}"
+      APP_ENV: ${CORE_APP_ENV}
+      SECRET_KEY: ${CORE_SECRET_KEY}
+      SECRET_KEY_2: ${CORE_SECRET_KEY}
+      CELERY_BROKER_URL: ${CORE_BROKER_URL}
+      CELERY_RESULT_BACKEND: ${CORE_RESULT_BACKEND}
+      RAY_ADDRESS: ${CORE_RAY_ADDRESS}
+      PORT: ${CORE_PORT}
+      LICENSE_KEY_SIGNED: ${LICENSE_KEY}
+    depends_on:
+      - redis
+      - postgres
+
+  core_worker:
+    image: ${CORE_IMAGE}
+    restart: on-failure
+    command: celery -A app.celery.celery_tasks worker --loglevel=info
+    environment:
+      DATABASE_URL: "postgresql+asyncpg://${CORE_DATABASE_USER}:${CORE_DATABASE_PASSWORD}@${CORE_DATABASE_HOST}/${CORE_DATABASE_NAME}"
+      APP_ENV: ${CORE_APP_ENV}
+      SECRET_KEY: ${CORE_SECRET_KEY}
+      SECRET_KEY_2: ${CORE_SECRET_KEY}
+      CELERY_BROKER_URL: ${CORE_BROKER_URL}
+      CELERY_RESULT_BACKEND: ${CORE_RESULT_BACKEND}
+      RAY_ADDRESS: ${CORE_RAY_ADDRESS}
+      LICENSE_KEY_SIGNED: ${LICENSE_KEY}
+    depends_on:
+      - redis
+      - postgres
+
+  backend:
+    image: ${BACKEND_IMAGE}
+    restart: on-failure
+    environment:
+      FRONTEND_URL: ${FRONTEND_PROTOCOL}://${FRONTEND_HOST}
+      BACKEND_URL: ${BACKEND_PROTOCOL}://${BACKEND_HOST}
+      SYNTHO_ENGINE_URL: http://core:${CORE_PORT}/api
+      SYNTHO_WEBSOCKET_URL: ws://core:${CORE_PORT}/websocket/
+      SECRET_KEY: $${BACKEND_SECRET_KEY}
+      DJANGO_PRODUCTION: "True"
+      REDIS_HOST: ${BACKEND_REDIS_HOST}
+      REDIS_PORT: ${BACKEND_REDIS_PORT}
+      REDIS_DB_INDEX: ${BACKEND_REDIS_DB_INDEX}
+      DB_HOST: ${BACKEND_DB_HOST}
+      DB_NAME:  ${BACKEND_DB_NAME}
+      DB_USER: ${BACKEND_DB_USER}
+      DB_PASSWORD: ${BACKEND_DB_PASSWORD}
+      DB_PORT: ${BACKEND_DB_PORT}
+      USER_NAME: ${ADMIN_USERNAME}
+      USER_PASSWORD: ${ADMIN_PASSWORD}
+      USER_EMAIL: ${ADMIN_EMAIL}
+    ports:
+      - "${BACKEND_PORT}:${BACKEND_PORT}"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "${BACKEND_PROTOCOL}://${BACKEND_HOST}"]
+      interval: 5s
+      timeout: 1s
+      retries: 30
+  
+  worker:
+    image: ${BACKEND_IMAGE}
+    entrypoint: [celery, -A, SynthoBackend, worker]
+    environment:
+      FRONTEND_URL: ${FRONTEND_PROTOCOL}://${FRONTEND_HOST}
+      BACKEND_URL: ${BACKEND_PROTOCOL}://${BACKEND_HOST}
+      SYNTHO_ENGINE_URL: http://core:${CORE_PORT}/api
+      SYNTHO_WEBSOCKET_URL: ws://core:${CORE_PORT}/websocket/
+      SECRET_KEY: $${BACKEND_SECRET_KEY}
+      DJANGO_PRODUCTION: "True"
+      REDIS_HOST: ${BACKEND_REDIS_HOST}
+      REDIS_PORT: ${BACKEND_REDIS_PORT}
+      REDIS_DB_INDEX: ${BACKEND_REDIS_DB_INDEX}
+      DB_HOST: ${BACKEND_DB_HOST}
+      DB_NAME:  ${BACKEND_DB_NAME}
+      DB_USER: ${BACKEND_DB_USER}
+      DB_PASSWORD: ${BACKEND_DB_PASSWORD}
+      DB_PORT: ${BACKEND_DB_PORT}
+
+  frontend:
+    image: ${FRONTEND_IMAGE}
+    network_mode: host
+    environment:
+        NODE_ENV: development
+        PORT: ${FRONTEND_PORT}
+        OPEN_API_URL: ${BACKEND_PROTOCOL}://${BACKEND_HOST}/playground/?format=openapi
+        NEXT_PUBLIC_BACKEND_HOST: ${BACKEND_HOST}
+        NEXT_PUBLIC_BACKEND_PROTOCOL: ${BACKEND_PROTOCOL}
+        NEXT_PUBLIC_BACKEND_WS_PROTOCOL: ws
+        NEXT_PUBLIC_FRONTEND_HOST: ${FRONTEND_HOST}
+        NEXT_PUBLIC_FRONTEND_PROTOCOL: ${FRONTEND_PROTOCOL}
+    ports:
+      - "${FRONTEND_PORT}:${FRONTEND_PORT}"
+    depends_on:
+      - backend
+    healthcheck:
+      test: ["CMD", "curl", "-f", "${FRONTEND_PROTOCOL}://${FRONTEND_HOST}"]
+      interval: 5s
+      timeout: 1s
+      retries: 30
+
+  postgres:
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=syntho
+      - POSTGRES_PASSWORD=!2ImY6&A!*i3
+      - POSTGRES_MULTIPLE_DATABASES="syntho-core","syntho-backend"
+    volumes:
+      - database-data:/var/lib/postgresql/data/
+      - ./postgres:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U syntho -d syntho-backend"]
+      interval: 1s
+      timeout: 1s
+      retries: 30
+  redis:
+    image: redis:6.2-alpine
+
+volumes:
+  database-data:
+
+networks:
+  default:
+      name: syntho

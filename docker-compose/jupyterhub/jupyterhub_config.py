@@ -67,6 +67,11 @@ c.DockerSpawner.debug = True
 c.JupyterHub.hub_ip = 'localhost'
 c.JupyterHub.hub_port = 8080
 
+# Environment variables
+c.Spawner.environment = {
+    "LICENSE_KEY_SIGNED": os.environ.get('LICENSE_KEY', "key/license")
+}
+
 # TLS config
 c.JupyterHub.port = 443
 #c.JupyterHub.ssl_key = os.environ['SSL_KEY']

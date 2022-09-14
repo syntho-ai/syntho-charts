@@ -109,7 +109,7 @@ services:
       retries: 30
 
   postgres:
-    image: postgres
+    image: postgres:14.5
     ports:
       - "5432:5432"
     environment:
@@ -118,7 +118,7 @@ services:
       - POSTGRES_MULTIPLE_DATABASES="syntho-core","syntho-backend"
     volumes:
       - database-data:/var/lib/postgresql/data/
-      - ./postgres:/docker-entrypoint-initdb.d
+      - ./postgres/docker-postgres-entrypoint.sh:/docker-entrypoint-initdb.d/docker-postgres-entrypoint.sh
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U syntho -d syntho-backend"]
       interval: 1s

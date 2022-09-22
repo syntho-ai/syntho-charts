@@ -62,7 +62,7 @@ services:
       postgres:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "-f", "${BACKEND_PROTOCOL}://${BACKEND_HOST}"]
+      test: ["CMD", "curl", "-f", "${BACKEND_PROTOCOL}://${BACKEND_HOST}/docs"]
       interval: 5s
       timeout: 1s
       retries: 30

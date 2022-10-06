@@ -69,7 +69,7 @@ c.JupyterHub.hub_port = 8080
 
 # Environment variables
 c.Spawner.environment = {
-    "LICENSE_KEY_SIGNED": os.environ.get('LICENSE_KEY', "key/license")
+    "LICENSE_KEY_SIGNED": os.environ.get('LICENSE_KEY_SIGNED', "key/license")
 }
 
 # TLS config

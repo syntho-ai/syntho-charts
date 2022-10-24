@@ -4,7 +4,7 @@
 
 frontend_url: demo.syntho.ai
 frontend_protocol: https
-backend_url: https://backend.demo.syntho.ai
+backend_url: backend.demo.syntho.ai
 backend_protocol: https
 SynthoLicense: 
 
@@ -18,14 +18,15 @@ core:
     port: 8080
     type: ClusterIP
   db:
-    username: postgres
+    user: postgres
     password: postgres
     name: rwdb
     host: postgres
+    port: 5432
   port: 8080
   secret_key: abcd12412
   redis_host: redis://redis-svc:6379/1
-  ray_address: ray-cluster-dev-demo-ray-head
+  ray_address: ray-cluster-ray-head
 
 backend:
   replicaCount: 1
@@ -43,9 +44,10 @@ backend:
     port: 8000
   db:
     username: syntho
-    password: syntho-local-dev
+    password: syntho-local-password
     name: syntho-backend
-    host: backend
+    host: database
+    port: 5432
   ingress:
     enabled: false
     name: backend-ingress

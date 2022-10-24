@@ -5,7 +5,7 @@
 # image is Ray image to use for the head and workers of this Ray cluster.
 # It's recommended to build custom dependencies for your workload into this image,
 # taking one of the offical `rayproject/ray` images as base.
-image: syntho.azurecr.io/syntho-ray:0.3.3.10-cpu
+image: syntho.azurecr.io/syntho-ray:latest-cpu
 # headPodType is the podType used for the Ray head node (as configured below).
 headPodType: rayHeadType
 
@@ -102,4 +102,4 @@ operatorNamespace: default
 # It is recommended to use the same Ray version in the operator as in the Ray clusters managed
 # by the operator. In other words, the images specified under the fields `operatorImage` and `image`
 # should carry matching Ray versions.
-operatorImage: syntho.azurecr.io/syntho-ray:0.3.3.10-cpu
+operatorImage: syntho.azurecr.io/syntho-ray:latest-cpu

@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  {{- with .Values.core.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  labels:
+    {{- include "syntho-core.labels" . | nindent 4 }}
+    app: {{ .Values.core.name }}-worker
+  name: {{ .Values.core.name }}-worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.core.name }}-worker
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.core.name }}-worker
+    spec:
+      containers:
+        - image: "{{ .Values.core.image.repository }}:{{ .Values.core.image.tag }}"
+          env:
+            - name: APP_ENV
+              value: prod
+            - name: DATABASE_URL
+              value: "postgresql+asyncpg://{{ .Values.core.db.username }}:{{ .Values.core.db.password }}@{{ .Values.core.db.host }}:{{ .Values.core.db.port | default "5432" }}/{{ .Values.core.db.name }}"
+            - name: PORT
+              value: {{quote .Values.core.port }}
+            - name: SECRET_KEY
+              value: {{quote .Values.core.secret_key }}
+            - name: WORKER_TIMEOUT
+              value: "{{ .Values.core.worker_timeout | default "3000" }}"
+            - name: SECRET_KEY_2
+              value: {{quote .Values.core.secret_key }}
+            - name: CELERY_BROKER_URL
+              value: {{quote .Values.core.redis_host }}
+            - name: CELERY_RESULT_BACKEND
+              value: {{quote .Values.core.redis_host }}
+            - name: RAY_ADDRESS
+              value: {{quote .Values.core.ray_address }}
+            - name: LICENSE_KEY_SIGNED
+              value: {{ .Values.SynthoLicense }}
+          {{- if or $.Values.core.env $.Values.core.envSecrets }}
+            {{- range $key, $value := $.Values.core.env }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
+            {{- range $key, $secret := $.Values.core.envSecrets }}
+            - name: {{ $key }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $secret }}
+                  key: {{ $key | quote }}
+            {{- end }}
+          {{- end }}
+          command: ["celery"]
+          args: ["-A", "app.celery.celery_tasks", "worker", "--loglevel=info"]
+          name: {{ .Values.core.name }}-worker
+          imagePullPolicy: Always
+          resources: {}
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      restartPolicy: Always
+status: {}

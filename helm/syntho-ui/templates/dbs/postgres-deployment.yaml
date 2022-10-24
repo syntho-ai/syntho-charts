@@ -1,0 +1,47 @@
+{{- if .Values.core.database_enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+  labels:
+    io.kompose.service: postgres
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: postgres
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        io.kompose.service: postgres
+    spec:
+      containers:
+        - env:
+            - name: POSTGRES_DB
+              value: {{quote .Values.core.db.name }}
+            - name: POSTGRES_PASSWORD
+              value: {{quote .Values.core.db.password }}
+            - name: POSTGRES_USER
+              value: {{quote .Values.core.db.username }}
+          image: synthoregistry.azurecr.io/postgres:latest
+          name: postgres
+          resources: {}
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: database-data-1
+              subPath: postgres
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}        
+      restartPolicy: Always
+      volumes:
+        - name: database-data-1
+          persistentVolumeClaim:
+            claimName: database-data-1
+status: {}
+{{- end }}

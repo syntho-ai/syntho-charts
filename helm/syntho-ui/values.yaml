@@ -35,7 +35,7 @@ backend:
     tag: latest
   name: backend
   port: 8000
-  secret_key: django-insecure-(^ky&f)l&$3sqf2tctv-(pgzvh!+9$j%b5xe2y@&%p2ay*h$$a
+  secret_key: secret-key-change-this-into-something-much-more-safe
   redis:
     host: redis-svc
     port: 6379

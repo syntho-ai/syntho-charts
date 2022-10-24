@@ -1,0 +1,157 @@
+# Default values for syntho-core.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+frontend_url: demo.syntho.ai
+frontend_protocol: https
+backend_url: https://backend.demo.syntho.ai
+backend_protocol: https
+SynthoLicense: 
+
+core:
+  replicaCount: 1
+  image:
+    repository: synthoregistry.azurecr.io/syntho-core-api
+    tag: latest
+  name: core
+  service:
+    port: 8080
+    type: ClusterIP
+  db:
+    username: postgres
+    password: postgres
+    name: rwdb
+    host: postgres
+  port: 8080
+  secret_key: abcd12412
+  redis_host: redis://redis-svc:6379/1
+  ray_address: ray-cluster-dev-demo-ray-head
+
+backend:
+  replicaCount: 1
+  image:
+    repository: synthoregistry.azurecr.io/syntho-core-backend
+    tag: latest
+  name: backend
+  port: 8000
+  secret_key: django-insecure-(^ky&f)l&$3sqf2tctv-(pgzvh!+9$j%b5xe2y@&%p2ay*h$$a
+  redis:
+    host: redis-svc
+    port: 6379
+    db: 0
+  service:
+    port: 8000
+  db:
+    username: syntho
+    password: syntho-local-dev
+    name: syntho-backend
+    host: backend
+  ingress:
+    enabled: false
+    name: backend-ingress
+    className: nginx
+    annotations: {
+      cert-manager.io/cluster-issuer: "letsencrypt-production",
+      nginx.ingress.kubernetes.io/proxy-buffer-size: "32k",
+      nginx.ingress.kubernetes.io/affinity: "cookie",
+      nginx.ingress.kubernetes.io/rewrite-target: /,
+      nginx.ingress.kubernetes.io/proxy-connect-timeout: "600",
+      nginx.ingress.kubernetes.io/proxy-read-timeout: "600",
+      nginx.ingress.kubernetes.io/proxy-send-timeout: "600",
+      nginx.ingress.kubernetes.io/proxy-body-size: "512m"
+    }
+    hosts:
+      - host: backend.syntho.company.com
+        paths:
+          - path: /
+            pathType: Prefix
+    tls:
+      - hosts:
+        - backend.syntho.company.com
+        secretName: backend-tls
+
+frontend:
+  replicaCount: 1
+  name: frontend
+  image:
+    repository: synthoregistry.azurecr.io/syntho-core-frontend
+    tag: latest
+  port: 3000
+  service:
+    port: 3000
+  ingress:
+    enabled: true
+    name: frontend-ingress
+    className: nginx
+    annotations: {
+      cert-manager.io/cluster-issuer: "letsencrypt-production",
+      nginx.ingress.kubernetes.io/proxy-buffer-size: "32k",
+      nginx.ingress.kubernetes.io/affinity: "cookie",
+      nginx.ingress.kubernetes.io/rewrite-target: /,
+      nginx.ingress.kubernetes.io/proxy-connect-timeout: "600",
+      nginx.ingress.kubernetes.io/proxy-read-timeout: "600",
+      nginx.ingress.kubernetes.io/proxy-send-timeout: "600",
+      nginx.ingress.kubernetes.io/proxy-body-size: "512m",
+    }
+    hosts:
+      - host: syntho.company.com
+        paths:
+          - path: /
+            pathType: Prefix
+    
+    tls:
+      - hosts:
+        - syntho.company.com
+        secretName: frontend-tls
+
+imagePullSecrets: 
+  - name: <synthoImageSecret>
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

@@ -25,7 +25,7 @@ spec:
               value: {{quote .Values.core.db.password }}
             - name: POSTGRES_USER
               value: {{quote .Values.core.db.username }}
-          image: synthoregistry.azurecr.io/postgres:latest
+          image: postgres:latest
           name: postgres
           resources: {}
           ports:

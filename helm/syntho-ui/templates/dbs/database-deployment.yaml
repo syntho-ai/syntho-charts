@@ -29,7 +29,7 @@ spec:
               value: {{quote .Values.backend.db.password }}
             - name: POSTGRES_USER
               value: {{quote .Values.backend.db.user }}
-          image: synthoregistry.azurecr.io/postgres:latest
+          image: postgres:latest
           name: postgres
           ports:
             - containerPort: 5432

@@ -11,7 +11,7 @@ SynthoLicense:
 core:
   replicaCount: 1
   image:
-    repository: synthoregistry.azurecr.io/syntho-core-api
+    repository: syntho.azurecr.io/syntho-core-api
     tag: latest
   name: core
   service:
@@ -32,7 +32,7 @@ core:
 backend:
   replicaCount: 1
   image:
-    repository: synthoregistry.azurecr.io/syntho-core-backend
+    repository: syntho.azurecr.io/syntho-core-backend
     tag: latest
   name: backend
   port: 8000
@@ -82,7 +82,7 @@ frontend:
   replicaCount: 1
   name: frontend
   image:
-    repository: synthoregistry.azurecr.io/syntho-core-frontend
+    repository: syntho.azurecr.io/syntho-core-frontend
     tag: latest
   port: 3000
   service:

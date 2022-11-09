@@ -69,6 +69,8 @@ spec:
                   key: {{ $key | quote }}
             {{- end }}
           {{- end }}
+          volumeMounts:
+            {{- toYaml .Values.backend.volumeMounts | default "" | nindent 12 }} 
           name: {{ .Values.backend.name }}
           ports:
             - containerPort: {{ .Values.backend.port }}
@@ -97,6 +99,8 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      volumes:
+        {{- toYaml .Values.backend.volumes | default "" | nindent 8 }}    
       restartPolicy: Always
       {{- if .Values.nodeSelector }}
       nodeSelector: {{- .Values.nodeSelector | toYaml | nindent 8 }}
@@ -179,6 +183,8 @@ spec:
                 key: {{ $key | quote }}
           {{- end }}
         {{- end }}
+        volumeMounts:
+          {{- toYaml .Values.backend.volumeMounts | default "" | nindent 12 }} 
         image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}"
         command: ["celery"]
         args: ["-A", "SynthoBackend", "worker"]
@@ -192,6 +198,8 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      volumes:
+        {{- toYaml .Values.backend.volumes | default "" | nindent 8 }}    
       restartPolicy: Always
       {{- if .Values.nodeSelector }}
       nodeSelector: {{- .Values.nodeSelector | toYaml | nindent 8 }}

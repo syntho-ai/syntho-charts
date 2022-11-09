@@ -5,7 +5,7 @@
 # image is Ray image to use for the head and workers of this Ray cluster.
 # It's recommended to build custom dependencies for your workload into this image,
 # taking one of the offical `rayproject/ray` images as base.
-image: rayproject/ray:latest
+image: syntho.azurecr.io/syntho-ray:latest-cpu
 # headPodType is the podType used for the Ray head node (as configured below).
 headPodType: rayHeadType
 
@@ -108,4 +108,19 @@ operatorNamespace: default
 # It is recommended to use the same Ray version in the operator as in the Ray clusters managed
 # by the operator. In other words, the images specified under the fields `operatorImage` and `image`
 # should carry matching Ray versions.
-operatorImage: rayproject/ray:latest
+operatorImage: syntho.azurecr.io/syntho-ray:latest-cpu
+
+extraVolumes:
+# extraVolumes:
+#  - name: syntho-secret
+#    secret:
+#      secretName: syntho-secret
+#      items:
+#        - key: syntho-secret
+#          path: syntho-secret
+
+extraVolumeMounts: 
+# extraVolumeMounts:
+#  - name: syntho-secret
+#    mountPath: /opt/syntho/secret
+#    readOnly: true

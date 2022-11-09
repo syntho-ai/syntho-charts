@@ -103,3 +103,6 @@ operatorNamespace: default
 # by the operator. In other words, the images specified under the fields `operatorImage` and `image`
 # should carry matching Ray versions.
 operatorImage: syntho.azurecr.io/syntho-ray:latest-cpu
+
+extraVolumes: []
+extraVolumeMounts: []

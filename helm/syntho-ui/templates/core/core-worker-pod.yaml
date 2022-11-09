@@ -55,6 +55,8 @@ spec:
                   key: {{ $key | quote }}
             {{- end }}
           {{- end }}
+          volumeMounts:
+            {{- toYaml .Values.core.volumeMounts | default "" | nindent 12 }} 
           command: ["celery"]
           args: ["-A", "app.celery.celery_tasks", "worker", "--loglevel=info"]
           name: {{ .Values.core.name }}-worker
@@ -64,6 +66,8 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      volumes:
+        {{- toYaml .Values.core.volumes | default "" | nindent 8 }}    
       restartPolicy: Always
       {{- if .Values.nodeSelector }}
       nodeSelector: {{- .Values.nodeSelector | toYaml | nindent 8 }}

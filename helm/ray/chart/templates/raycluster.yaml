@@ -40,6 +40,9 @@ spec:
           - name: dshm
             emptyDir:
               medium: Memory
+          {{- with $.Values.extraVolumes }}
+          {{- . | toYaml | nindent 10 }}
+          {{- end }}
         {{- with $.Values.imagePullSecrets }}
           imagePullSecrets:
             {{- toYaml . | nindent 12 }}
@@ -71,6 +74,9 @@ spec:
             volumeMounts:
             - mountPath: /dev/shm
               name: dshm
+            {{- with $.Values.extraVolumeMounts }}
+            {{- . | toYaml | nindent 12 }}
+            {{- end }}
             resources:
               requests:
                 cpu: {{ .CPU }}

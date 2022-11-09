@@ -158,8 +158,35 @@ autoscaling:
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
 
+## Node labels for pod assignment
+## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#nodeselector
 nodeSelector: {}
 
+# Tolerations for nodes that have taints on them.
+# Useful if you want to dedicate nodes to just run kafka-exporter
+# https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
 tolerations: []
 
+# tolerations:
+# - key: "key"
+#   operator: "Equal"
+#   value: "value"
+#   effect: "NoSchedule"
+
+## Pod scheduling preferences (by default keep pods within a release on separate nodes).
+## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
+## By default we don't set affinity
 affinity: {}
+
+# affinity: 
+#  podAffinity:
+#    preferredDuringSchedulingIgnoredDuringExecution:
+#     - weight: 50
+#       podAffinityTerm:
+#         labelSelector:
+#           matchExpressions:
+#           - key: app
+#             operator: In
+#             values:
+#               - syntho
+#         topologyKey: "kubernetes.io/hostname"

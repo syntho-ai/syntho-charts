@@ -24,3 +24,12 @@ spec:
   volumes:
     - name: data
       emptyDir: {}
+  {{- if .Values.nodeSelector }}
+  nodeSelector: {{- .Values.nodeSelector | toYaml | nindent 4 }}
+  {{- end }}
+  {{- if .Values.tolerations }}
+  tolerations: {{- .Values.tolerations | toYaml | nindent 4 }}
+  {{- end }}
+  {{- if .Values.affinity }}
+  affinity: {{- .Values.affinity | toYaml | nindent 4 }}
+  {{- end }}

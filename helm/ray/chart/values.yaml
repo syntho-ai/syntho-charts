@@ -110,6 +110,26 @@ operatorNamespace: default
 # should carry matching Ray versions.
 operatorImage: syntho.azurecr.io/syntho-ray:latest-cpu
 
+nodeSelector: {}
+
+tolerations:
+# - key: nvidia.com/gpu
+#   operator: Exists
+#   effect: NoSchedule
+
+affinity:
+#  podAffinity:
+#    preferredDuringSchedulingIgnoredDuringExecution:
+#     - weight: 50
+#       podAffinityTerm:
+#         labelSelector:
+#           matchExpressions:
+#           - key: app
+#             operator: In
+#             values:
+#               - syntho
+#         topologyKey: "kubernetes.io/hostname"
+
 extraVolumes:
 # extraVolumes:
 #  - name: syntho-secret

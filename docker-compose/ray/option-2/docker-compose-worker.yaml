@@ -12,6 +12,10 @@ services:
     environment:
        RAY_SCHEDULER_SPREAD_THRESHOLD: 0.0
        LICENSE_KEY_SIGNED: ${LICENSE_KEY}
+    # volumes:
+    # Additional volumes for Kerberos as an example
+    # Uncomment if volumes are required
+    #  - /krb/krb5.conf:/etc/krb5.conf
     ulimits:
       nofile:
         soft: 65536

@@ -14,6 +14,10 @@ services:
       RAY_ADDRESS: ${CORE_RAY_ADDRESS}
       PORT: ${CORE_PORT}
       LICENSE_KEY_SIGNED: ${LICENSE_KEY}
+    # volumes:
+    # Additional volumes for Kerberos as an example
+    # Uncomment if volumes are required
+    #  - /krb/krb5.conf:/etc/krb5.conf
     depends_on:
       - redis
       - postgres
@@ -31,6 +35,10 @@ services:
       CELERY_RESULT_BACKEND: ${CORE_RESULT_BACKEND}
       RAY_ADDRESS: ${CORE_RAY_ADDRESS}
       LICENSE_KEY_SIGNED: ${LICENSE_KEY}
+    # volumes:
+    # Additional volumes for Kerberos as an example
+    # Uncomment if volumes are required
+    #  - /krb/krb5.conf:/etc/krb5.conf
     depends_on:
       - redis
       - postgres

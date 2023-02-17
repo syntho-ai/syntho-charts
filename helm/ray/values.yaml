@@ -11,8 +11,8 @@ operatorImage:
   pullPolicy: IfNotPresent
 
 image:
-  repository: synthoregistry.azurecr.io/syntho-ray
-  tag: 0.15.2-cpu-internal
+  repository: syntho.azurecr.io/syntho-ray
+  tag: latest-cpu
   pullPolicy: IfNotPresent
 
 head:

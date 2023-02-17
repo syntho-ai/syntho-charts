@@ -1,108 +1,265 @@
-# Default values for Ray.
+# Default values for kuberay-operator.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+SynthoLicense: key
 
-# RayCluster settings:
+clustername: ray-cluster
 
-# image is Ray image to use for the head and workers of this Ray cluster.
-# It's recommended to build custom dependencies for your workload into this image,
-# taking one of the offical `rayproject/ray` images as base.
-image: syntho.azurecr.io/syntho-ray:latest-cpu
-# headPodType is the podType used for the Ray head node (as configured below).
-headPodType: rayHeadType
+operatorImage:
+  repository: kuberay/operator
+  tag: nightly
+  pullPolicy: IfNotPresent
 
-imagePullSecrets: 
-    - name: acr-auth
+image:
+  repository: synthoregistry.azurecr.io/syntho-ray
+  tag: 0.15.2-cpu-internal
+  pullPolicy: IfNotPresent
 
-SynthoLicense: <syntho-license-key>
+head:
+  # If enableInTreeAutoscaling is true, the autoscaler sidecar will be added to the Ray head pod.
+  # Ray autoscaler integration is supported only for Ray versions >= 1.11.0
+  # Ray autoscaler integration is Beta with KubeRay >= 0.3.0 and Ray >= 2.0.0.
+  # enableInTreeAutoscaling: true
+  # autoscalerOptions is an OPTIONAL field specifying configuration overrides for the Ray autoscaler.
+  # The example configuration shown below below represents the DEFAULT values.
+  # autoscalerOptions:
+    # upscalingMode: Default
+    # idleTimeoutSeconds: 60
+    # securityContext: {}
+    # env: []
+    # envFrom: []
+    # resources specifies optional resource request and limit overrides for the autoscaler container.
+    # For large Ray clusters, we recommend monitoring container resource usage to determine if overriding the defaults is required.
+    # resources:
+    #   limits:
+    #     cpu: "500m"
+    #     memory: "512Mi"
+    #   requests:
+    #     cpu: "500m"
+    #     memory: "512Mi"
+  labels: {}
+  rayStartParams:
+    dashboard-host: '0.0.0.0'
+    block: 'true'
+  # containerEnv specifies environment variables for the Ray container,
+  # Follows standard K8s container env schema.
+  containerEnv:
+  - name: RAY_SCHEDULER_SPREAD_THRESHOLD
+    value: "0.0"
+  envFrom: []
+    # - secretRef:
+    #     name: my-env-secret
+  # ports optionally allows specifying ports for the Ray container.
+  # ports: []
+  # resource requests and limits for the Ray head container.
+  # Modify as needed for your application.
+  # Note that the resources in this example are much too small for production;
+  # we don't recommend allocating less than 8G memory for a Ray pod in production.
+  # Ray pods should be sized to take up entire K8s nodes when possible.
+  # Always set CPU and memory limits for Ray pods.
+  # It is usually best to set requests equal to limits.
+  # See https://docs.ray.io/en/latest/cluster/kubernetes/user-guides/config.html#resources
+  # for further guidance.
+  resources:
+    limits:
+      cpu: "1"
+      # To avoid out-of-memory issues, never allocate less than 2G memory for the Ray head.
+      memory: "2G"
+    requests:
+      cpu: "1"
+      memory: "2G"
+  annotations: {}
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  # Ray container security context.
+  securityContext: {}
+  ports:
+  - containerPort: 6379
+    name: gcs
+  - containerPort: 8265
+    name: dashboard
+  - containerPort: 10001
+    name: client
+  volumes:
+    - name: log-volume
+      emptyDir: {}
+  # Ray writes logs to /tmp/ray/session_latests/logs
+  volumeMounts:
+    - mountPath: /tmp/ray
+      name: log-volume
+  # sidecarContainers specifies additional containers to attach to the Ray pod.
+  # Follows standard K8s container spec.
+  sidecarContainers: []
 
-# podTypes is the list of pod configurations available for use as Ray nodes.
-podTypes:
-    # The key for each podType is a user-defined string.
-    # Since we set headPodType: rayHeadType, the Ray head pod will use the configuration
-    # defined in this entry of podTypes:
-    rayHeadType:
-        # CPU is the number of CPUs used by this pod type.
-        # (Used for both requests and limits. Must be an integer, as Ray does not support fractional CPUs.)
-        CPU: 4
-        # memory is the memory used by this Pod type.
-        # (Used for both requests and limits.)
-        memory: 25Gi
-        # GPU is the number of NVIDIA GPUs used by this pod type.
-        # (Optional, requires GPU nodes with appropriate setup. See https://docs.ray.io/en/master/cluster/kubernetes-gpu.html)
-        GPU: 0
-        # rayResources is an optional string-int mapping signalling additional resources to Ray.
-        # "CPU", "GPU", and "memory" are filled automatically based on the above settings, but can be overriden;
-        # For example, rayResources: {"CPU": 0} can be used in the head podType to prevent Ray from scheduling tasks on the head.
-        # See https://docs.ray.io/en/master/advanced.html#dynamic-remote-parameters for an example of usage of custom resources in a Ray task.
-        rayResources: {}
-        # Optionally, set a node selector for this podType: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
-        nodeSelector: {}
 
-        # tolerations for Ray pods of this podType (the head's podType in this case)
-        #   ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
-        #   Note that it is often not necessary to manually specify tolerations for GPU
-        #   usage on managed platforms such as AKS, EKS, and GKE.
-        #   ref: https://docs.ray.io/en/master/cluster/kubernetes-gpu.html
-        tolerations: []
-        # - key: "nvidia.com/gpu"
-        #   operator: Exists
-        #   effect: NoSchedule
+worker:
+  # If you want to disable the default workergroup
+  # uncomment the line below
+  # disabled: true
+  groupName: workergroup
+  replicas: 1
+  labels: {}
+  rayStartParams:
+    block: 'true'
+  initContainerImage: 'busybox:1.28'  # Enable users to specify the image for init container. Users can pull the busybox image from their private repositories.
+  # Security context for the init container.
+  initContainerSecurityContext: {}
+  # containerEnv specifies environment variables for the Ray container,
+  # Follows standard K8s container env schema.
+  containerEnv:
+   - name: RAY_SCHEDULER_SPREAD_THRESHOLD
+     value: "0.0"
+  envFrom: []
+    # - secretRef:
+    #     name: my-env-secret
+  # ports optionally allows specifying ports for the Ray container.
+  # ports: []
+  # resource requests and limits for the Ray head container.
+  # Modify as needed for your application.
+  # Note that the resources in this example are much too small for production;
+  # we don't recommend allocating less than 8G memory for a Ray pod in production.
+  # Ray pods should be sized to take up entire K8s nodes when possible.
+  # Always set CPU and memory limits for Ray pods.
+  # It is usually best to set requests equal to limits.
+  # See https://docs.ray.io/en/latest/cluster/kubernetes/user-guides/config.html#resources
+  # for further guidance.
+  resources:
+    limits:
+      cpu: "1"
+      memory: "1G"
+    requests:
+      cpu: "1"
+      memory: "1G"
+  annotations: {}
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  # Ray container security context.
+  securityContext: {}
+  volumes:
+    - name: log-volume
+      emptyDir: {}
+  # Ray writes logs to /tmp/ray/session_latests/logs
+  volumeMounts:
+    - mountPath: /tmp/ray
+      name: log-volume
+  # sidecarContainers specifies additional containers to attach to the Ray pod.
+  # Follows standard K8s container spec.
+  sidecarContainers: []
 
-    # The key for each podType is a user-defined string.
-    rayWorkerType:
-        # minWorkers is the minimum number of Ray workers of this pod type to keep running.
-        minWorkers: 0
-        # maxWorkers is the maximum number of Ray workers of this pod type to which Ray will scale.
-        maxWorkers: 4
-        # memory is the memory used by this Pod type.
-        # (Used for both requests and limits.)
-        memory: 50Gi
-        # CPU is the number of CPUs used by this pod type.
-        # (Used for both requests and limits. Must be an integer, as Ray does not support fractional CPUs.)
-        CPU: 10
-        # GPU is the number of NVIDIA GPUs used by this pod type.
-        # (Optional, requires GPU nodes with appropriate setup. See https://docs.ray.io/en/master/cluster/kubernetes-gpu.html)
-        GPU: 0
-        # rayResources is an optional string-int mapping signalling additional resources to Ray.
-        # "CPU", "GPU", and "memory" are filled automatically based on the above settings, but can be overriden;
-        # For example, rayResources: {"CPU": 0} can be used in the head podType to prevent Ray from scheduling tasks on the head.
-        # See https://docs.ray.io/en/master/advanced.html#dynamic-remote-parameters for an example of usage of custom resources in a Ray task.
-        rayResources: {}
-        # Optionally, set a node selector for this Pod type. See https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
-        nodeSelector: {}
+# The map's key is used as the groupName.
+# For example, key:small-group in the map below
+# will be used as the groupName
+additionalWorkerGroups:
+  smallGroup:
+    # Disabled by default
+    disabled: false
+    replicas: 1
+    minReplicas: 1
+    maxReplicas: 3
+    labels: {}
+    rayStartParams:
+      block: 'true'
+    initContainerImage: 'busybox:1.28'  # Enable users to specify the image for init container. Users can pull the busybox image from their private repositories.
+    # Security context for the init container.
+    initContainerSecurityContext: {}
+  # containerEnv specifies environment variables for the Ray container,
+  # Follows standard K8s container env schema.
+    containerEnv:
+    - name: RAY_SCHEDULER_SPREAD_THRESHOLD
+      value: "0.0"
+    envFrom: []
+        # - secretRef:
+        #     name: my-env-secret
+    # ports optionally allows specifying ports for the Ray container.
+    # ports: []
+  # resource requests and limits for the Ray head container.
+  # Modify as needed for your application.
+  # Note that the resources in this example are much too small for production;
+  # we don't recommend allocating less than 8G memory for a Ray pod in production.
+  # Ray pods should be sized to take up entire K8s nodes when possible.
+  # Always set CPU and memory limits for Ray pods.
+  # It is usually best to set requests equal to limits.
+  # See https://docs.ray.io/en/latest/cluster/kubernetes/user-guides/config.html#resources
+  # for further guidance.
+    resources:
+      limits:
+        cpu: 1
+        memory: "1G"
+      requests:
+        cpu: 1
+        memory: "1G"
+    annotations: {}
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
+    # Ray container security context.
+    securityContext: {}
+    volumes:
+      - name: log-volume
+        emptyDir: {}
+  # Ray writes logs to /tmp/ray/session_latests/logs
+    volumeMounts:
+      - mountPath: /tmp/ray
+        name: log-volume
+    sidecarContainers: []
 
-        # tolerations for Ray pods of this podType
-        #   ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
-        #   Note that it is often not necessary to manually specify tolerations for GPU
-        #   usage on managed platforms such as AKS, EKS, and GKE.
-        #   ref: https://docs.ray.io/en/master/cluster/kubernetes-gpu.html
-        tolerations: []
-        # - key: nvidia.com/gpu
-        #   operator: Exists
-        #   effect: NoSchedule
+# Configuration for Head's Kubernetes Service
+service:
+  # This is optional, and the default is ClusterIP.
+  type: ClusterIP
+  port: 8080
 
+nameOverride: "kuberay"
+fullnameOverride: "kuberay-operator"
 
-# Operator settings:
+storage:
+  storageClassName: azurefile-csi
 
-# operatorOnly - If true, will only set up the Operator with this release,
-# without launching a Ray cluster.
-operatorOnly: false
-# clusterOnly - If true, will only create a RayCluster resource with this release,
-# without setting up the Operator.
-# (Useful when launching multiple Ray clusters.)
-clusterOnly: false
-# namespacedOperator - If true, the operator is scoped to the Release namespace
-# and only manages RayClusters in that namespace.
-# By default, the operator is cluster-scoped and runs in the default namespace.
-namespacedOperator: false
-# operatorNamepsace - If using a cluster-scoped operator (namespacedOperator: false), set the namespace
-# in which to launch the operator.
-operatorNamespace: default
-# operatorImage - The image used in the operator deployment.
-# It is recommended to use one of the official `rayproject/ray` images for the operator.
-# It is recommended to use the same Ray version in the operator as in the Ray clusters managed
-# by the operator. In other words, the images specified under the fields `operatorImage` and `image`
-# should carry matching Ray versions.
-operatorImage: syntho.azurecr.io/syntho-ray:latest-cpu
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: "kuberay-operator"
 
-extraVolumes: []
-extraVolumeMounts: []
+resources:
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do whelm to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  limits:
+    cpu: 100m
+    # Anecdotally, managing 500 Ray pods requires roughly 500MB memory.
+    # Monitor memory usage and adjust as needed.
+    memory: 512Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 512Mi
+
+livenessProbe:
+  initialDelaySeconds: 10
+  periodSeconds: 5
+  failureThreshold: 5
+
+readinessProbe:
+  initialDelaySeconds: 10
+  periodSeconds: 5
+  failureThreshold: 5
+
+rbacEnable: true
+
+batchScheduler:
+  enabled: false
+
+# Set up `securityContext` to improve Pod security.
+# See https://github.com/ray-project/kuberay/blob/master/docs/guidance/pod-security.md for further guidance.
+securityContext: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+

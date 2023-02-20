@@ -9,8 +9,8 @@ imagePullSecrets:
   - name: syntho-cr-secret
 
 operatorImage:
-  repository: kuberay/operator
-  tag: nightly
+  repository: syntho.azurecr.io/syntho-operator-ray
+  tag: latest
   pullPolicy: IfNotPresent
 
 image:

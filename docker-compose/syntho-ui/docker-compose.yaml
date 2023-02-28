@@ -14,6 +14,7 @@ services:
       RAY_ADDRESS: ${CORE_RAY_ADDRESS}
       PORT: ${CORE_PORT}
       LICENSE_KEY_SIGNED: ${LICENSE_KEY}
+      MAX_WORKERS: "${CORE_WORKERS:-4}"
     # volumes:
     # Additional volumes for Kerberos as an example
     # Uncomment if volumes are required
@@ -21,6 +22,11 @@ services:
     depends_on:
       - redis
       - postgres
+    healthcheck:
+      test: wget --no-verbose --tries=1 -O /dev/null http://localhost:${CORE_PORT}/api/v1/status || exit 1
+      interval: 5s
+      timeout: 1s
+      retries: 30
 
   core_worker:
     image: ${CORE_IMAGE}
@@ -70,7 +76,7 @@ services:
       postgres:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "-f", "${BACKEND_PROTOCOL}://${BACKEND_HOST}/docs/"]
+      test: wget --no-verbose --tries=1 -O /dev/null http://localhost:${BACKEND_PORT}/docs/ || exit 1
       interval: 5s
       timeout: 1s
       retries: 30
@@ -111,7 +117,7 @@ services:
     depends_on:
       - backend
     healthcheck:
-      test: ["CMD", "curl", "-f", "${FRONTEND_PROTOCOL}://${FRONTEND_HOST}"]
+      test: wget --no-verbose --tries=1 -O /dev/null http://localhost:${FRONTEND_PORT}/login || exit 1
       interval: 5s
       timeout: 1s
       retries: 30

@@ -120,7 +120,7 @@ frontend:
 
 db:
   image:
-    repository: synthoregistry.azurecr.io/postgres
+    repository: syntho.azurecr.io/postgres
     tag: latest
 
 redis:

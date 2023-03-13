@@ -7,7 +7,7 @@ metadata:
 spec:
   containers:
   - name: redis
-    image: redis:7.0-rc1-alpine3.15
+    image: "{{ .Values.redis.image.repository }}:{{ .Values.redis.image.tag }}"
     command:
       - redis-server
     env:

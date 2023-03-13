@@ -10,7 +10,7 @@ metadata:
     app: {{ .Values.core.name }}-worker
   name: {{ .Values.core.name }}-worker
 spec:
-  replicas: 1
+  replicas: {{ .Values.core.replicaCount }}
   selector:
     matchLabels:
       app: {{ .Values.core.name }}-worker

@@ -60,7 +60,7 @@ spec:
           readinessProbe:
             tcpSocket:
               port: 3000
-            initialDelaySeconds: 50
+            initialDelaySeconds: 60
             periodSeconds: 10
           #livenessProbe:
           #  httpGet:

@@ -29,7 +29,7 @@ spec:
               value: {{quote .Values.backend.db.password }}
             - name: POSTGRES_USER
               value: {{quote .Values.backend.db.user }}
-          image: postgres:latest
+          image: "{{ .Values.db.image.repository }}:{{ .Values.db.image.tag }}"
           name: postgres
           ports:
             - containerPort: 5432
@@ -41,7 +41,7 @@ spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
-      {{- end }}        
+      {{- end }}
       restartPolicy: Always
       volumes:
         - name: database-data-2

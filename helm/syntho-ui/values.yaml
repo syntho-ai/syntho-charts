@@ -2,10 +2,14 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+frontend_path: 
 frontend_url: demo.syntho.ai
 frontend_protocol: https
+
+backend_path: 
 backend_url: backend.demo.syntho.ai
 backend_protocol: https
+
 SynthoLicense: 
 
 core:
@@ -66,7 +70,6 @@ backend:
       cert-manager.io/cluster-issuer: "letsencrypt-production",
       nginx.ingress.kubernetes.io/proxy-buffer-size: "32k",
       nginx.ingress.kubernetes.io/affinity: "cookie",
-      nginx.ingress.kubernetes.io/rewrite-target: /,
       nginx.ingress.kubernetes.io/proxy-connect-timeout: "600",
       nginx.ingress.kubernetes.io/proxy-read-timeout: "600",
       nginx.ingress.kubernetes.io/proxy-send-timeout: "600",
@@ -99,7 +102,6 @@ frontend:
       cert-manager.io/cluster-issuer: "letsencrypt-production",
       nginx.ingress.kubernetes.io/proxy-buffer-size: "32k",
       nginx.ingress.kubernetes.io/affinity: "cookie",
-      nginx.ingress.kubernetes.io/rewrite-target: /,
       nginx.ingress.kubernetes.io/proxy-connect-timeout: "600",
       nginx.ingress.kubernetes.io/proxy-read-timeout: "600",
       nginx.ingress.kubernetes.io/proxy-send-timeout: "600",
@@ -115,6 +117,16 @@ frontend:
       - hosts:
         - syntho.company.com
         secretName: frontend-tls
+
+db:
+  image:
+    repository: synthoregistry.azurecr.io/postgres
+    tag: latest
+
+redis:
+  image:
+    repository: redis
+    tag: 7.0-rc1-alpine3.15
 
 imagePullSecrets: 
   - name: <synthoImageSecret>

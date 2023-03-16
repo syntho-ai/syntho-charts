@@ -70,6 +70,8 @@ services:
       USER_NAME: ${ADMIN_USERNAME}
       USER_PASSWORD: ${ADMIN_PASSWORD}
       USER_EMAIL: ${ADMIN_EMAIL}
+      RAY_URL: http://${CORE_RAY_ADDRESS}:8265
+      DATA_ACCESS: "${BACKEND_DATA_ACCESS:-True}"
     ports:
       - "${BACKEND_PORT}:${BACKEND_PORT}"
     depends_on:
@@ -109,7 +111,7 @@ services:
         OPEN_API_URL: ${BACKEND_PROTOCOL}://${BACKEND_HOST}/playground/?format=openapi
         NEXT_PUBLIC_BACKEND_HOST: ${BACKEND_HOST}
         NEXT_PUBLIC_BACKEND_PROTOCOL: ${BACKEND_PROTOCOL}
-        NEXT_PUBLIC_BACKEND_WS_PROTOCOL: ws
+        NEXT_PUBLIC_BACKEND_WS_PROTOCOL: ${BACKEND_WS_PROTOCOL}
         NEXT_PUBLIC_FRONTEND_HOST: ${FRONTEND_HOST}
         NEXT_PUBLIC_FRONTEND_PROTOCOL: ${FRONTEND_PROTOCOL}
     ports:
@@ -143,7 +145,3 @@ services:
 
 volumes:
   database-data:
-
-networks:
-  default:
-      name: syntho

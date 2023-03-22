@@ -53,6 +53,8 @@ spec:
                   key: {{ $key | quote }}
             {{- end }}
           {{- end }}
+          volumeMounts:
+            {{- toYaml .Values.frontend.volumeMounts | default "" | nindent 12 }} 
           name: {{ .Values.frontend.name }}
           ports:
             - name: frontend-port
@@ -76,6 +78,8 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      volumes:
+        {{- toYaml .Values.frontend.volumes | default "" | nindent 8 }}  
       restartPolicy: Always
       {{- if .Values.nodeSelector }}
       nodeSelector: {{- .Values.nodeSelector | toYaml | nindent 8 }}

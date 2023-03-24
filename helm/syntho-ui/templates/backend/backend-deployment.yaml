@@ -56,6 +56,10 @@ spec:
               value: {{quote .Values.backend.db.user }}
             - name: DB_PASSWORD
               value: {{quote .Values.backend.db.password }}
+            - name: DATA_ACCESS
+              value: {{.Values.backend.data_access | default "true" | quote }}
+            - name: RAY_URL
+              value: "http://{{ .Values.core.ray_address }}:8265"
           {{- if or $.Values.backend.env $.Values.backend.envSecrets }}
             {{- range $key, $value := $.Values.backend.env }}
             - name: {{ $key }}

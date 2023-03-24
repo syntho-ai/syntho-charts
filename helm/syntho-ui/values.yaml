@@ -33,7 +33,7 @@ core:
   port: 8080
   secret_key: abcd12412
   redis_host: redis://redis-svc:6379/1
-  ray_address: ray-cluster-ray-head
+  ray_address: ray-cluster-head-svc
 
 backend:
   replicaCount: 1

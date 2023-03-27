@@ -58,7 +58,10 @@ spec:
           volumeMounts:
             {{- toYaml .Values.core.volumeMounts | default "" | nindent 12 }} 
           command: ["celery"]
-          args: ["-A", "app.celery.celery_tasks", "worker", "--loglevel=info"]
+          args:
+            {{  range .Values.core.celery_args }}
+              - {{ . }}
+            {{ end }}
           name: {{ .Values.core.name }}-worker
           imagePullPolicy: Always
           resources: {}

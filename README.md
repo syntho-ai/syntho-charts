@@ -26,7 +26,7 @@ A repository containing all the relevant Helm charts and other related configura
 
 - Ray (Chart + sample configuration)
 - JupyterHub (only sample configuration)
-- Syntho Application (currently not available in this repo yet)
+- Syntho Application (Chart)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 

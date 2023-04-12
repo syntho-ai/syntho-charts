@@ -35,13 +35,17 @@ spec:
             - name: SECRET_KEY_2
               value: {{quote .Values.core.secret_key }}
             - name: CELERY_BROKER_URL
-              value: {{quote .Values.core.redis_host }}
+              value:  "redis://{{ .Values.core.redis.host}}:{{ .Values.core.redis.port }}/{{ .Values.core.redis.db }}"
             - name: CELERY_RESULT_BACKEND
-              value: {{quote .Values.core.redis_host }}
+              value:  "redis://{{ .Values.core.redis.host}}:{{ .Values.core.redis.port }}/{{ .Values.core.redis.db }}"
             - name: RAY_ADDRESS
               value: {{quote .Values.core.ray_address }}
             - name: LICENSE_KEY_SIGNED
               value: {{ .Values.SynthoLicense }}
+            - name: REDIS_HOST
+              value: {{ quote .Values.core.redis.host}}
+            - name: REDIS_PORT
+              value: {{ quote .Values.core.redis.port }}
           {{- if or $.Values.core.env $.Values.core.envSecrets }}
             {{- range $key, $value := $.Values.core.env }}
             - name: {{ $key }}

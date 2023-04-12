@@ -22,7 +22,7 @@ services:
     # Uncomment if volumes are required
     #  - /krb/krb5.conf:/etc/krb5.conf
     healthcheck:
-      test: wget --no-verbose --tries=1 -O /dev/null http://localhost:8080/api/v1/status || exit 1
+      test: wget --no-verbose --tries=1 -O /dev/null http://localhost:${CORE_PORT}/api/v1/status || exit 1
       interval: 5s
       timeout: 1s
       retries: 30

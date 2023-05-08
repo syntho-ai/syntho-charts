@@ -25,6 +25,7 @@ core:
   volumeMounts: []
   database_enabled: true
   celery_args: ['-A', 'app.celery', 'worker', '--loglevel=info', '-P', 'threads']
+  workers: 4
   db:
     username: postgres
     password: postgres

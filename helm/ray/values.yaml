@@ -9,13 +9,13 @@ imagePullSecrets:
   - name: syntho-cr-secret
 
 operatorImage:
-  repository: syntho.azurecr.io/syntho-operator-ray
-  tag: latest
+  repository: kuberay/operator
+  tag: nightly
   pullPolicy: IfNotPresent
 
 image:
-  repository: syntho.azurecr.io/syntho-ray
-  tag: latest-cpu
+  repository: synthoregistry.azurecr.io/syntho-ray
+  tag: 0.31.2-cpu-internal
   pullPolicy: IfNotPresent
 
 head:
@@ -40,6 +40,10 @@ head:
     #   requests:
     #     cpu: "500m"
     #     memory: "512Mi"
+  init_container_enabled: False
+  initContainer:
+    arguments: ["chown", "-R", "777", "/tmp/ray-workflows"]
+    securityContext: {}
   labels: {}
   rayStartParams:
     dashboard-host: '0.0.0.0'
@@ -99,7 +103,7 @@ head:
 worker:
   # If you want to disable the default workergroup
   # uncomment the line below
-  # disabled: true
+  disabled: true
   groupName: workergroup
   replicas: 1
   labels: {}

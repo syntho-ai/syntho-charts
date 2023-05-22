@@ -34,6 +34,19 @@ spec:
     template:
       spec:
         imagePullSecrets: {{- toYaml .Values.imagePullSecrets | nindent 10 }}
+        {{ if .Values.head.init_container_enabled }}
+        initContainers:
+          - name: init
+            image: {{ .Values.head.initContainer.image | default "busybox:1.28" }}
+            command: {{  range .Values.head.initContainer.arguments }}
+                      - {{quote . }}
+                    {{ end }}
+            securityContext:
+            {{- toYaml .Values.head.securityContext | nindent 14 }}
+            volumeMounts: 
+              - mountPath: /tmp/ray-workflows
+                name: ray-workflows
+        {{ end }}
         containers:
           - volumeMounts: 
             - mountPath: /tmp/ray-workflows

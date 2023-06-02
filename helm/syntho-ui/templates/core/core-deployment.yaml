@@ -84,9 +84,9 @@ spec:
               path: /api/v1/status
               port: {{ .Values.core.port }}
             initialDelaySeconds: 30
-            timeoutSeconds: 2
-            periodSeconds: 2
-            failureThreshold: 2
+            timeoutSeconds: 3
+            periodSeconds: 5
+            failureThreshold: 1
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}

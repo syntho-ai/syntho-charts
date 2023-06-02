@@ -71,6 +71,24 @@ spec:
           name: {{ .Values.core.name }}-worker
           imagePullPolicy: Always
           resources: {}
+          readinessProbe:
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 10
+            exec:
+              command:
+              - "/bin/bash"
+              - "-c"
+              - "celery -A app.celery inspect ping | grep -q OK"
+          livenessProbe:
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 10
+            exec:
+              command:
+              - "/bin/bash"
+              - "-c"
+              - "celery -A app.celery inspect ping | grep -q OK"
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}

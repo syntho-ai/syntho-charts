@@ -27,11 +27,11 @@ spec:
             - name: PORT
               value: {{quote .Values.frontend.port}}
             - name: OPEN_API_URL
-              value: {{ .Values.backend_protocol }}://{{ .Values.backend_url }}{{ .Values.backend_path }}/playground/?format=openapi
+              value: {{ .Values.frontend_protocol }}://{{ .Values.frontend_url }}{{ .Values.frontend_path }}/api/playground/?format=openapi
             - name: NEXT_PUBLIC_BACKEND_HOST
-              value: {{ .Values.backend_url }}{{ .Values.backend_path }}
+              value: {{ .Values.frontend_url }}{{ .Values.frontend_path }}
             - name: NEXT_PUBLIC_BACKEND_PROTOCOL
-              value: {{ .Values.backend_protocol }}
+              value: {{ .Values.frontend_protocol }}
             - name: NEXT_PUBLIC_BACKEND_WS_PROTOCOL
               value: wss
             - name: NEXT_PUBLIC_FRONTEND_HOST

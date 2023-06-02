@@ -3,12 +3,8 @@
 # Declare variables to be passed into your templates.
 
 frontend_path: 
-frontend_url: demo.syntho.ai
+frontend_url: syntho.company.com
 frontend_protocol: https
-
-backend_path: 
-backend_url: backend.demo.syntho.ai
-backend_protocol: https
 
 SynthoLicense: 
 
@@ -24,8 +20,7 @@ core:
   volumes: []
   volumeMounts: []
   database_enabled: true
-  celery_args: ['-A', 'app.celery', 'worker', '--loglevel=info', '-P', 'threads']
-  workers: 4
+  celery_args: ['-A', 'app.celery', 'worker', '--loglevel=info']
   db:
     username: postgres
     password: postgres
@@ -39,6 +34,7 @@ core:
     port: 6379
     db: 1
   ray_address: ray-cluster-head-svc
+  workers: 4
 
 backend:
   replicaCount: 1
@@ -47,6 +43,7 @@ backend:
     tag: latest
   name: backend
   port: 8000
+  workers: 4
   secret_key: secret-key-change-this-into-something-much-more-safe
   redis:
     host: redis-svc
@@ -67,28 +64,7 @@ backend:
     email: admin@company.com
   volumes: []
   volumeMounts: []
-  ingress:
-    enabled: true
-    name: backend-ingress
-    className: nginx
-    annotations: {
-      cert-manager.io/cluster-issuer: "letsencrypt-production",
-      nginx.ingress.kubernetes.io/proxy-buffer-size: "32k",
-      nginx.ingress.kubernetes.io/affinity: "cookie",
-      nginx.ingress.kubernetes.io/proxy-connect-timeout: "600",
-      nginx.ingress.kubernetes.io/proxy-read-timeout: "600",
-      nginx.ingress.kubernetes.io/proxy-send-timeout: "600",
-      nginx.ingress.kubernetes.io/proxy-body-size: "512m"
-    }
-    hosts:
-      - host: backend.syntho.company.com
-        paths:
-          - path: /
-            pathType: Prefix
-    tls:
-      - hosts:
-        - backend.syntho.company.com
-        secretName: backend-tls
+
 
 frontend:
   replicaCount: 1

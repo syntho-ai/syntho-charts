@@ -23,7 +23,7 @@ spec:
         - image: "{{ .Values.core.image.repository }}:{{ .Values.core.image.tag }}"
           env:
             - name: APP_ENV
-              value: prod
+              value: {{ .Values.core.app_env | default "prod" }}
             - name: DATABASE_URL
               value: "postgresql+asyncpg://{{ .Values.core.db.username }}:{{ .Values.core.db.password }}@{{ .Values.core.db.host }}:{{ .Values.core.db.port | default "5432" }}/{{ .Values.core.db.name }}"
             - name: PORT
@@ -42,6 +42,8 @@ spec:
               value: {{quote .Values.core.ray_address }}
             - name: LICENSE_KEY_SIGNED
               value: {{ .Values.SynthoLicense }}
+            - name: MAX_WORKERS
+              value: {{ quote .Values.core.workers }}
             - name: REDIS_HOST
               value: {{ quote .Values.core.redis.host}}
             - name: REDIS_PORT

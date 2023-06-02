@@ -24,8 +24,6 @@ spec:
           env:
             - name: FRONTEND_URL
               value: {{ .Values.frontend_protocol }}://{{ .Values.frontend_url }}
-            - name: BACKEND_URL
-              value: {{ .Values.backend_protocol}}://{{ .Values.backend_url }}
             - name: SYNTHO_ENGINE_URL
               value: http://{{ .Values.core.name }}-service:{{ .Values.core.service.port }}/api
             - name: SYNTHO_WEBSOCKET_URL
@@ -60,6 +58,10 @@ spec:
               value: {{.Values.backend.data_access | default "true" | quote }}
             - name: RAY_URL
               value: "http://{{ .Values.core.ray_address }}:8265"
+            - name: WORKERS
+              value: {{quote .Values.backend.workers }}
+            - name: EXTRA_ALLOWED_HOSTS
+              value: {{quote .Values.frontend_url }}
           {{- if or $.Values.backend.env $.Values.backend.envSecrets }}
             {{- range $key, $value := $.Values.backend.env }}
             - name: {{ $key }}
@@ -86,15 +88,21 @@ spec:
               memory: "2Gi"
           readinessProbe:
             httpGet:
-              path: /docs/
+              path: /api/docs/
               port: 8000
+              httpHeaders:
+              - name: Host
+                value: {{ .Values.frontend_url }}
             initialDelaySeconds: 10
             periodSeconds: 60
             successThreshold: 1
           livenessProbe:
             httpGet:
-              path: /docs/
+              path: /api/docs/
               port: 8000
+              httpHeaders:
+              - name: Host
+                value: {{ .Values.frontend_url }}
             initialDelaySeconds: 60
             timeoutSeconds: 10
             periodSeconds: 10
@@ -120,7 +128,7 @@ status: {}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  {{- with .Values.backend.ingress.annotations }}
+  {{- with .Values.backend.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}
@@ -142,8 +150,6 @@ spec:
         env:
           - name: FRONTEND_URL
             value: {{ .Values.frontend_protocol }}://{{ .Values.frontend_url }}
-          - name: BACKEND_URL
-            value: {{ .Values.backend_protocol}}://{{ .Values.backend_url }}
           - name: SYNTHO_ENGINE_URL
             value: http://{{ .Values.core.name }}-service:{{ .Values.core.service.port }}/api
           - name: SYNTHO_WEBSOCKET_URL

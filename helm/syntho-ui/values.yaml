@@ -106,9 +106,11 @@ db:
     tag: latest
 
 redis:
+  replicaCount: 1
   image:
     repository: redis
-    tag: 7.0-rc1-alpine3.15
+    tag: 7.2-rc2
+  storageClassName: default
 
 imagePullSecrets: 
   - name: <synthoImageSecret>
@@ -148,13 +150,6 @@ resources: {}
   # requests:
   #   cpu: 100m
   #   memory: 128Mi
-
-autoscaling:
-  enabled: false
-  minReplicas: 1
-  maxReplicas: 100
-  targetCPUUtilizationPercentage: 80
-  # targetMemoryUtilizationPercentage: 80
 
 ## Node labels for pod assignment
 ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#nodeselector

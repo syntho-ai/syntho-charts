@@ -71,6 +71,24 @@ spec:
           name: {{ .Values.core.name }}-worker
           imagePullPolicy: Always
           resources: {}
+          readinessProbe:
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 10
+            exec:
+              command:
+              - "/bin/bash"
+              - "-c"
+              - "celery -b redis://{{ .Values.core.redis.host}}:{{ .Values.core.redis.port }}/{{ .Values.core.redis.db }} inspect ping -d celery@$HOSTNAME"
+          livenessProbe:
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 10
+            exec:
+              command:
+              - "/bin/bash"
+              - "-c"
+              - "celery -b redis://{{ .Values.core.redis.host}}:{{ .Values.core.redis.port }}/{{ .Values.core.redis.db }} inspect ping -d celery@$HOSTNAME"
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}

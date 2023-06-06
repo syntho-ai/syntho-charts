@@ -9,13 +9,13 @@ imagePullSecrets:
   - name: syntho-cr-secret
 
 operatorImage:
-  repository: kuberay/operator
-  tag: nightly
+  repository: syntho.azurecr.io/syntho-ray-operator
+  tag: latest
   pullPolicy: IfNotPresent
 
 image:
-  repository: synthoregistry.azurecr.io/syntho-ray
-  tag: 0.31.2-cpu-internal
+  repository: syntho.azurecr.io/syntho-ray
+  tag: 0.31.2-cpu
   pullPolicy: IfNotPresent
 
 head:
@@ -69,12 +69,12 @@ head:
   # for further guidance.
   resources:
     limits:
-      cpu: "1"
+      cpu: "6"
       # To avoid out-of-memory issues, never allocate less than 2G memory for the Ray head.
-      memory: "2G"
+      memory: "32G"
     requests:
-      cpu: "1"
-      memory: "2G"
+      cpu: "6"
+      memory: "32G"
   annotations: {}
   nodeSelector: {}
   tolerations: []
@@ -270,4 +270,3 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
-

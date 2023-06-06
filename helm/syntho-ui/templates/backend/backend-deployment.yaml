@@ -204,6 +204,24 @@ spec:
               memory: "2Gi"
             requests:
               memory: "1Gi"
+        readinessProbe:
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 10
+          exec:
+            command:
+            - "/bin/sh"
+            - "-c"
+            - "celery -b redis://{{ .Values.backend.redis.host}}:{{ .Values.backend.redis.port }}/{{ .Values.backend.redis.db }} inspect ping -d celery@$HOSTNAME"
+        livenessProbe:
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 10
+          exec:
+            command:
+            - "/bin/sh"
+            - "-c"
+            - "celery -b redis://{{ .Values.backend.redis.host}}:{{ .Values.backend.redis.port }}/{{ .Values.backend.redis.db }} inspect ping -d celery@$HOSTNAME"
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}

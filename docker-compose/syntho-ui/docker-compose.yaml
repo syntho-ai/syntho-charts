@@ -58,7 +58,6 @@ services:
     restart: on-failure
     environment:
       FRONTEND_URL: ${FRONTEND_PROTOCOL}://${FRONTEND_HOST}
-      BACKEND_URL: ${BACKEND_PROTOCOL}://${BACKEND_HOST}
       SYNTHO_ENGINE_URL: http://core:${CORE_PORT}/api
       SYNTHO_WEBSOCKET_URL: ws://core:${CORE_PORT}/websocket/
       SECRET_KEY: $${BACKEND_SECRET_KEY}
@@ -94,7 +93,6 @@ services:
     entrypoint: [celery, -A, SynthoBackend, worker]
     environment:
       FRONTEND_URL: ${FRONTEND_PROTOCOL}://${FRONTEND_HOST}
-      BACKEND_URL: ${BACKEND_PROTOCOL}://${BACKEND_HOST}
       SYNTHO_ENGINE_URL: http://core:${CORE_PORT}/api
       SYNTHO_WEBSOCKET_URL: ws://core:${CORE_PORT}/websocket/
       SECRET_KEY: $${BACKEND_SECRET_KEY}
@@ -110,7 +108,6 @@ services:
 
   frontend:
     image: ${FRONTEND_IMAGE}
-    network_mode: host
     environment:
         NODE_ENV: development
         PORT: ${FRONTEND_PORT}

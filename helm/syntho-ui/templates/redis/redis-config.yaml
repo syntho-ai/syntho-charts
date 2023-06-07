@@ -9,7 +9,6 @@ data:
     maxmemory 400mb
     maxmemory-policy allkeys-lru
     maxclients 20000
-    timeout 300
     appendonly no
     dbfilename dump.rdb
     dir /data
@@ -18,5 +17,4 @@ data:
     maxmemory 400mb
     maxmemory-policy allkeys-lru
     maxclients 20000
-    timeout 300
     dir /data

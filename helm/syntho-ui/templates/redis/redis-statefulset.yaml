@@ -57,14 +57,14 @@ spec:
         configMap:
           name: redis-configuration
       {{- if .Values.nodeSelector }}
-      nodeSelector: {{- .Values.nodeSelector | toYaml | nindent 4 }}
+      nodeSelector: {{- .Values.nodeSelector | toYaml | nindent 8 }}
       {{- end }}
       {{- if .Values.tolerations }}
-      tolerations: {{- .Values.tolerations | toYaml | nindent 4 }}
+      tolerations: {{- .Values.tolerations | toYaml | nindent 8 }}
       {{- end }}
       {{- if .Values.affinity }}
-      affinity: {{- .Values.affinity | toYaml | nindent 4 }}
-      {{- end }}            
+      affinity: {{- .Values.affinity | toYaml | nindent 8 }}
+      {{- end }}          
   volumeClaimTemplates:
   - metadata:
       name: redis-claim

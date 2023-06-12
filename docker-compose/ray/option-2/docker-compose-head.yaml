@@ -5,6 +5,14 @@ version: "3"
 services:
   head:
     image: ${SYNTHO_RAY_IMAGE}
+    deploy:
+        resources:
+            limits:
+              cpus: 8
+              memory: 32G
+            reservations:
+              cpus: 6
+              memory: 32G
     restart: always
     network_mode: host
     container_name: ray-head
@@ -23,4 +31,9 @@ services:
         soft: 65536
         hard: 65536
     command: >
-      ray start --head --port=6379 --no-monitor --dashboard-host 0.0.0.0 --block --disable-usage-stats
+      ray start --head --port=6379 --no-monitor --dashboard-host 0.0.0.0 --block --disable-usage-stats --storage=/tmp
+  
+network:
+  default:
+    name: syntho
+    external: ${SAME_NETWORK:-false}

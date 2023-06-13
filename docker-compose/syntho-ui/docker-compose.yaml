@@ -139,8 +139,11 @@ services:
       interval: 1s
       timeout: 1s
       retries: 30
+
   redis:
     image: redis:6.2-alpine
+    ports:
+      - "6379:6379"
 
 volumes:
   database-data:

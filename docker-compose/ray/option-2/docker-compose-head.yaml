@@ -24,7 +24,7 @@ services:
         hard: 65536
     command: >
       ray start --head --port=6379 --no-monitor --dashboard-host 0.0.0.0 --block --disable-usage-stats --storage=/tmp
-  
+ 
 network:
   default:
     name: syntho

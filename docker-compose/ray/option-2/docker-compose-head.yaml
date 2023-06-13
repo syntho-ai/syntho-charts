@@ -5,14 +5,6 @@ version: "3"
 services:
   head:
     image: ${SYNTHO_RAY_IMAGE}
-    deploy:
-        resources:
-            limits:
-              cpus: 8
-              memory: 32G
-            reservations:
-              cpus: 6
-              memory: 32G
     restart: always
     network_mode: host
     container_name: ray-head

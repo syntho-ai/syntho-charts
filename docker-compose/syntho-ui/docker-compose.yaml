@@ -58,10 +58,10 @@ services:
     restart: on-failure
     environment:
       FRONTEND_URL: ${FRONTEND_PROTOCOL}://${FRONTEND_HOST}
-      BACKEND_URL: ${BACKEND_PROTOCOL}://${BACKEND_HOST}
       SYNTHO_ENGINE_URL: http://core:${CORE_PORT}/api
       SYNTHO_WEBSOCKET_URL: ws://core:${CORE_PORT}/websocket/
       SECRET_KEY: $${BACKEND_SECRET_KEY}
+      SECURE_COOKIES: ${SECURED_COOKIES}
       DJANGO_PRODUCTION: "True"
       REDIS_HOST: ${BACKEND_REDIS_HOST}
       REDIS_PORT: ${BACKEND_REDIS_PORT}
@@ -76,13 +76,14 @@ services:
       USER_EMAIL: ${ADMIN_EMAIL}
       DATA_ACCESS: ${BACKEND_DATA_ACCESS}
       RAY_URL: http://${CORE_RAY_ADDRESS}:8265
+      EXTRA_ALLOWED_HOSTS: "backend ${FRONTEND_DOMAIN}"
     ports:
       - "${BACKEND_PORT}:8000"
     depends_on:
       postgres:
         condition: service_healthy
     healthcheck:
-      test: wget --no-verbose --tries=1 -O /dev/null http://localhost:8000/docs/ || exit 1
+      test: wget --no-verbose --tries=1 -O /dev/null http://backend:8000/api/docs/ || exit 1
       interval: 5s
       timeout: 1s
       retries: 30
@@ -92,7 +93,6 @@ services:
     entrypoint: [celery, -A, SynthoBackend, worker]
     environment:
       FRONTEND_URL: ${FRONTEND_PROTOCOL}://${FRONTEND_HOST}
-      BACKEND_URL: ${BACKEND_PROTOCOL}://${BACKEND_HOST}
       SYNTHO_ENGINE_URL: http://core:${CORE_PORT}/api
       SYNTHO_WEBSOCKET_URL: ws://core:${CORE_PORT}/websocket/
       SECRET_KEY: $${BACKEND_SECRET_KEY}
@@ -108,16 +108,11 @@ services:
 
   frontend:
     image: ${FRONTEND_IMAGE}
-    network_mode: host
     environment:
         NODE_ENV: development
         PORT: ${FRONTEND_PORT}
-        OPEN_API_URL: ${BACKEND_PROTOCOL}://${BACKEND_HOST}/playground/?format=openapi
-        NEXT_PUBLIC_BACKEND_HOST: ${BACKEND_HOST}
-        NEXT_PUBLIC_BACKEND_PROTOCOL: ${BACKEND_PROTOCOL}
-        NEXT_PUBLIC_BACKEND_WS_PROTOCOL: ws
-        NEXT_PUBLIC_FRONTEND_HOST: ${FRONTEND_HOST}
-        NEXT_PUBLIC_FRONTEND_PROTOCOL: ${FRONTEND_PROTOCOL}
+        OPEN_API_URL: http://backend:8000/api/playground/?format=openapi
+        BACKEND_HOST: backend:8000
     ports:
       - "${FRONTEND_PORT}:${FRONTEND_PORT}"
     depends_on:

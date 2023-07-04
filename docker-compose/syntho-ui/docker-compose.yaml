@@ -90,7 +90,7 @@ services:
 
   worker:
     image: ${BACKEND_IMAGE}
-    entrypoint: [celery, -A, SynthoBackend, worker]
+    entrypoint: [python, manage.py, subscriber]
     environment:
       FRONTEND_URL: ${FRONTEND_PROTOCOL}://${FRONTEND_HOST}
       SYNTHO_ENGINE_URL: http://core:${CORE_PORT}/api

@@ -196,8 +196,8 @@ spec:
         volumeMounts:
           {{- toYaml .Values.backend.volumeMounts | default "" | nindent 12 }} 
         image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}"
-        command: ["celery"]
-        args: ["-A", "SynthoBackend", "worker"]
+        command: ["python"]
+        args: ["manage.py", "subscriber"]
         imagePullPolicy: Always
         resources:
             limits:

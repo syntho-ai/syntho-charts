@@ -76,7 +76,7 @@ spec:
             {{- end }}
           {{- end }}
           volumeMounts:
-            {{- toYaml .Values.backend.volumeMounts | default "" | nindent 12 }}
+            {{- toYaml .Values.backend.volumeMounts | default "" | nindent 12 }} 
           name: {{ .Values.backend.name }}
           ports:
             - containerPort: {{ .Values.backend.port }}
@@ -112,7 +112,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       volumes:
-        {{- toYaml .Values.backend.volumes | default "" | nindent 8 }}
+        {{- toYaml .Values.backend.volumes | default "" | nindent 8 }}    
       restartPolicy: Always
       {{- if .Values.nodeSelector }}
       nodeSelector: {{- .Values.nodeSelector | toYaml | nindent 8 }}
@@ -194,7 +194,7 @@ spec:
           {{- end }}
         {{- end }}
         volumeMounts:
-          {{- toYaml .Values.backend.volumeMounts | default "" | nindent 12 }}
+          {{- toYaml .Values.backend.volumeMounts | default "" | nindent 12 }} 
         image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}"
         command: ["python"]
         args: ["manage.py", "subscriber"]
@@ -210,24 +210,22 @@ spec:
           timeoutSeconds: 10
           exec:
             command:
-            - "/bin/sh"
-            - "-c"
-            - "celery -b redis://{{ .Values.backend.redis.host}}:{{ .Values.backend.redis.port }}/{{ .Values.backend.redis.db }} inspect ping -d celery@$HOSTNAME"
+            - cat
+            - /tmp/healthy
         livenessProbe:
           initialDelaySeconds: 30
           periodSeconds: 10
           timeoutSeconds: 10
           exec:
             command:
-            - "/bin/sh"
-            - "-c"
-            - "celery -b redis://{{ .Values.backend.redis.host}}:{{ .Values.backend.redis.port }}/{{ .Values.backend.redis.db }} inspect ping -d celery@$HOSTNAME"
+            - cat
+            - /tmp/healthy
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       volumes:
-        {{- toYaml .Values.backend.volumes | default "" | nindent 8 }}
+        {{- toYaml .Values.backend.volumes | default "" | nindent 8 }}    
       restartPolicy: Always
       {{- if .Values.nodeSelector }}
       nodeSelector: {{- .Values.nodeSelector | toYaml | nindent 8 }}

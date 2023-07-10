@@ -210,24 +210,22 @@ spec:
           timeoutSeconds: 10
           exec:
             command:
-            - "/bin/sh"
-            - "-c"
-            - "celery -b redis://{{ .Values.backend.redis.host}}:{{ .Values.backend.redis.port }}/{{ .Values.backend.redis.db }} inspect ping -d celery@$HOSTNAME"
+            - cat
+            - /tmp/healthy
         livenessProbe:
           initialDelaySeconds: 30
           periodSeconds: 10
           timeoutSeconds: 10
           exec:
             command:
-            - "/bin/sh"
-            - "-c"
-            - "celery -b redis://{{ .Values.backend.redis.host}}:{{ .Values.backend.redis.port }}/{{ .Values.backend.redis.db }} inspect ping -d celery@$HOSTNAME"
+            - cat
+            - /tmp/healthy
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       volumes:
-        {{- toYaml .Values.backend.volumes | default "" | nindent 8 }}
+        {{- toYaml .Values.backend.volumes | default "" | nindent 8 }}    
       restartPolicy: Always
       {{- if .Values.nodeSelector }}
       nodeSelector: {{- .Values.nodeSelector | toYaml | nindent 8 }}

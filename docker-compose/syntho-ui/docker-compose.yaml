@@ -33,7 +33,7 @@ services:
   core_worker:
     image: ${CORE_IMAGE}
     restart: on-failure
-    command: celery -A app.celery worker -P threads --loglevel=info
+    command: celery -A app.celery worker --loglevel=info
     environment:
       DATABASE_URL: "postgresql+asyncpg://${CORE_DATABASE_USER}:${CORE_DATABASE_PASSWORD}@${CORE_DATABASE_HOST}/${CORE_DATABASE_NAME}"
       APP_ENV: ${CORE_APP_ENV}

@@ -59,7 +59,7 @@ spec:
               servicePort: {{ $svcPort }}
               {{- end }}
           {{- end }}
-          - path: /api/.*
+          - path: /api/*
             pathType: Prefix
             backend:
               service:

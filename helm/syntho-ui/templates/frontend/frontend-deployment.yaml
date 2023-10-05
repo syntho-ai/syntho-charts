@@ -23,7 +23,7 @@ spec:
         - image: "{{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag }}"
           env:
             - name: NODE_ENV
-              value: production
+              value: {{quote .Values.frontend.mode | default "production"}}
             - name: PORT
               value: {{quote .Values.frontend.port}}
             - name: OPEN_API_URL
@@ -40,6 +40,8 @@ spec:
               value: {{ .Values.frontend_protocol }}
             - name: FRONTEND_PATH
               value: {{ .Values.frontend_path }}
+            - name: BACKEND_HOST
+              value: {{ .Values.backend.name }}:{{ .Values.backend.port }}
           {{- if or $.Values.frontend.env $.Values.frontend.envSecrets }}
             {{- range $key, $value := $.Values.frontend.env }}
             - name: {{ $key }}
@@ -59,6 +61,15 @@ spec:
           ports:
             - name: frontend-port
               containerPort: {{ .Values.frontend.service.port }}
+          resources:
+            limits:
+              cpu: "4000m"
+              ephemeral-storage: "3Gi"
+              memory: "3Gi"
+            requests:
+              cpu: "2000m"
+              ephemeral-storage: "3Gi"
+              memory: "3Gi"
           readinessProbe:
             tcpSocket:
               port: 3000
@@ -73,7 +84,6 @@ spec:
           #  periodSeconds: 10
           #  failureThreshold: 1
           imagePullPolicy: Always
-          resources: {}
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}

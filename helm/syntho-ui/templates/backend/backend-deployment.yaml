@@ -76,15 +76,19 @@ spec:
             {{- end }}
           {{- end }}
           volumeMounts:
-            {{- toYaml .Values.backend.volumeMounts | default "" | nindent 12 }}
+            {{- toYaml .Values.backend.volumeMounts | default "" | nindent 12 }} 
           name: {{ .Values.backend.name }}
           ports:
             - containerPort: {{ .Values.backend.port }}
           imagePullPolicy: Always
           resources:
             limits:
-              memory: "3Gi"
+              cpu: "2000m"
+              ephemeral-storage: "2Gi"
+              memory: "4Gi"
             requests:
+              cpu: "2000m"
+              ephemeral-storage: "2Gi"
               memory: "2Gi"
           readinessProbe:
             httpGet:
@@ -112,7 +116,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       volumes:
-        {{- toYaml .Values.backend.volumes | default "" | nindent 8 }}
+        {{- toYaml .Values.backend.volumes | default "" | nindent 8 }}    
       restartPolicy: Always
       {{- if .Values.nodeSelector }}
       nodeSelector: {{- .Values.nodeSelector | toYaml | nindent 8 }}
@@ -194,16 +198,20 @@ spec:
           {{- end }}
         {{- end }}
         volumeMounts:
-          {{- toYaml .Values.backend.volumeMounts | default "" | nindent 12 }}
+          {{- toYaml .Values.backend.volumeMounts | default "" | nindent 12 }} 
         image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}"
         command: ["python"]
         args: ["manage.py", "subscriber"]
         imagePullPolicy: Always
         resources:
             limits:
-              memory: "2Gi"
+              cpu: "500m"
+              ephemeral-storage: "2Gi"
+              memory: "500Mi"
             requests:
-              memory: "1Gi"
+              cpu: "500m"
+              ephemeral-storage: "2Gi"
+              memory: "250Mi"
         readinessProbe:
           initialDelaySeconds: 30
           periodSeconds: 10
@@ -237,3 +245,4 @@ spec:
       affinity: {{- .Values.affinity | toYaml | nindent 8 }}
       {{- end }}
 status: {}
+

@@ -19,6 +19,8 @@ spec:
       labels:
         app: {{ .Values.core.name }}-worker
     spec:
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
         - image: "{{ .Values.core.image.repository }}:{{ .Values.core.image.tag }}"
           env:
@@ -70,7 +72,17 @@ spec:
             {{ end }}
           name: {{ .Values.core.name }}-worker
           imagePullPolicy: Always
-          resources: {}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          resources:
+            limits:
+              cpu: "1000m"
+              ephemeral-storage: "3Gi"
+              memory: "750Mi"
+            requests:
+              cpu: "1000m"
+              ephemeral-storage: "3Gi"
+              memory: "750Mi"
           readinessProbe:
             initialDelaySeconds: 30
             periodSeconds: 10

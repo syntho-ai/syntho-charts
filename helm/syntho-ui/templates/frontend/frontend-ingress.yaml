@@ -60,7 +60,7 @@ spec:
               {{- end }}
           {{- end }}
           - path: /api/*
-            pathType: Prefix
+            pathType: ImplementationSpecific
             backend:
               service:
                 name: {{ $fullNameBackend }}

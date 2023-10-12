@@ -19,6 +19,8 @@ spec:
       labels:
         app: {{ .Values.core.name }}
     spec:
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
         - image: "{{ .Values.core.image.repository }}:{{ .Values.core.image.tag }}"
           env:
@@ -67,10 +69,16 @@ spec:
           ports:
             - containerPort: {{ .Values.core.port }}
           imagePullPolicy: Always
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
           resources:
             limits:
+              cpu: "2000m"
+              ephemeral-storage: "3Gi"
               memory: "3Gi"
             requests:
+              cpu: "2000m"
+              ephemeral-storage: "3Gi"
               memory: "2Gi"
           readinessProbe:
             httpGet:

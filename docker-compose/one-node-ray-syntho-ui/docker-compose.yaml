@@ -167,10 +167,10 @@ services:
     deploy:
       resources:
         limits:
-          cpus: 12
+          cpus: '12'
           memory: 100G
         reservations:
-          cpus: 8
+          cpus: '8'
           memory: 100G
     command: >
       ray start --head --port=6379 --no-monitor --dashboard-host 0.0.0.0 --block --disable-usage-stats --storage=/tmp

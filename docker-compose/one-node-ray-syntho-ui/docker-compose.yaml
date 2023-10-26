@@ -146,7 +146,6 @@ services:
   head:
     image: ${RAY_IMAGE}
     restart: always
-    network_mode: host
     container_name: ray-head
     shm_size: 12gb
     ports:

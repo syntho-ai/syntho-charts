@@ -23,6 +23,11 @@ The `.env` file contains the image tag latest for all images, which is a rolling
   - `BACKEND_IMAGE`
   - `FRONTEND_IMAGE`
 
+In order to access the Backend API correctly, the domain should be set. If the application is being accessed on the same machine that deploys it, `localhost` should be fine for this domain. If you're using a different machine on your network, the IP address or hostname should be used for the following variables:
+
+- `FRONTEND_HOST`: this should include the port as well. If port 3000 is used for the frontend, and it can be accessed on the same machine, the value would be `localhost:3000`. If another machine on the same network needs to access the frontend, the value will be `<IP-of-deployed-machine>:3000`
+- `FRONTEND_DOMAIN`: will be either `localhost` or the IP of the machine running the Syntho Application
+
 After the adjustment of these variables, the `docker compose` file should be ready for deployment. Additional variables can be adjusted as well, which are described in the Syntho documentation under `Deploy Syntho` -> `Deploy Syntho using Docker` -> `Deploy Syntho Application`
 
 ### [Optional] Set Docker limits for Ray image

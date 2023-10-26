@@ -32,7 +32,7 @@ After the adjustment of these variables, the `docker compose` file should be rea
 
 ### [Optional] Set Docker limits for Ray image
 
-In this example, we've set a limit of 12 CPUS and 100G for the AI cluster part (Ray). This limit can be increased or decreased by adjusting the variables `RAY_CPUS` and `RAY_MEMORY` in `.env`
+In this example, we've set a limit of 12 CPUs and 100G for the AI cluster part (Ray). This limit can be increased or decreased by adjusting the variables `RAY_CPUS` and `RAY_MEMORY` in `.env`
 
 ## Deployment
 

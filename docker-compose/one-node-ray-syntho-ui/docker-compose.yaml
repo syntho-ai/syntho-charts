@@ -144,7 +144,7 @@ services:
     image: redis:6.2-alpine
 
   head:
-    image: ${SYNTHO_RAY_IMAGE}
+    image: ${RAY_IMAGE}
     restart: always
     network_mode: host
     container_name: ray-head
@@ -165,11 +165,11 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '12'
-          memory: 100G
+          cpus: '${RAY_CPUS}'
+          memory: ${RAY_MEMORY}
         reservations:
-          cpus: '8'
-          memory: 100G
+          cpus: '${RAY_CPUS}'
+          memory: ${RAY_MEMORY}
     command: >
       ray start --head --port=6379 --no-monitor --dashboard-host 0.0.0.0 --block --disable-usage-stats --storage=/tmp
 

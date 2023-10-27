@@ -19,6 +19,17 @@ spec:
       labels:
         app: {{ .Values.frontend.name }}
     spec:
+      initContainers:
+        - name: wait-for-backend-service
+          image: busybox
+          command:
+            - 'sh'
+            - '-c'
+            - |
+              until wget -q --spider --server-response --header "Host: {{ .Values.frontend_url }}" "http://{{ .Values.backend.name }}.syntho.svc.cluster.local/api/docs/" 2>&1 | grep -q "HTTP/1.1 200 OK"; do
+                echo "Waiting for the backend service to be ready..."
+                sleep 1
+              done
       containers:
         - image: "{{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag }}"
           env:
@@ -27,11 +38,11 @@ spec:
             - name: PORT
               value: {{quote .Values.frontend.port}}
             - name: OPEN_API_URL
-              value: {{ .Values.frontend_protocol }}://{{ .Values.frontend_url }}{{ .Values.frontend_path }}/api/playground/?format=openapi
+              value: {{ .Values.backend.name }}.syntho.svc.cluster.local/api/playground/?format=openapi
             - name: NEXT_PUBLIC_BACKEND_HOST
-              value: {{ .Values.frontend_url }}{{ .Values.frontend_path }}
+              value: {{ .Values.backend.name }}.syntho.svc.cluster.local
             - name: NEXT_PUBLIC_BACKEND_PROTOCOL
-              value: {{ .Values.frontend_protocol }}
+              value: http
             - name: NEXT_PUBLIC_BACKEND_WS_PROTOCOL
               value: wss
             - name: NEXT_PUBLIC_FRONTEND_HOST
@@ -41,7 +52,11 @@ spec:
             - name: FRONTEND_PATH
               value: {{ .Values.frontend_path }}
             - name: BACKEND_HOST
-              value: {{ .Values.backend.name }}:{{ .Values.backend.port }}
+              value: {{ .Values.backend.name }}.syntho.svc.cluster.local
+          {{- if .Values.frontend.ingress.tls.selfSignedSSLCertificate }}
+            - name: _JAVA_OPTIONS
+              value: "-Dio.swagger.parser.util.RemoteUrl.trustAll=true -Dio.swagger.v3.parser.util.RemoteUrl.trustAll=true"
+          {{- end }}
           {{- if or $.Values.frontend.env $.Values.frontend.envSecrets }}
             {{- range $key, $value := $.Values.frontend.env }}
             - name: {{ $key }}
@@ -56,33 +71,28 @@ spec:
             {{- end }}
           {{- end }}
           volumeMounts:
-            {{- toYaml .Values.frontend.volumeMounts | default "" | nindent 12 }} 
+            {{- toYaml .Values.frontend.volumeMounts | default "" | nindent 12 }}
           name: {{ .Values.frontend.name }}
           ports:
             - name: frontend-port
               containerPort: {{ .Values.frontend.service.port }}
           resources:
             limits:
-              cpu: "4000m"
+              cpu: "2000m"
               ephemeral-storage: "3Gi"
               memory: "3Gi"
             requests:
-              cpu: "2000m"
+              cpu: "500m"
               ephemeral-storage: "3Gi"
               memory: "3Gi"
           readinessProbe:
             tcpSocket:
               port: 3000
-            initialDelaySeconds: 60
-            periodSeconds: 10
-          #livenessProbe:
-          #  httpGet:
-          #    path: /login
-          #    port: frontend-port
-          #  initialDelaySeconds: 50
-          #  timeoutSeconds: 10
-          #  periodSeconds: 10
-          #  failureThreshold: 1
+            initialDelaySeconds: 240
+            timeoutSeconds: 30
+            periodSeconds: 60
+            failureThreshold: 3
+            successThreshold: 1
           imagePullPolicy: Always
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:

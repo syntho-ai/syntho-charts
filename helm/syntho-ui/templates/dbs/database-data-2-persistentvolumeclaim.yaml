@@ -12,5 +12,6 @@ spec:
   resources:
     requests:
       storage: 100Mi
+  storageClassName: {{ .Values.db.storageClassName | default "default" }}
 status: {}
 {{- end }}

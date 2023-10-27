@@ -5,7 +5,7 @@ metadata:
   namespace: {{ .Release.Namespace }}
 spec:
   accessModes:
-  - ReadWriteMany
+  - {{ .Values.storage.accessMode | default "ReadWriteMany" }}
   resources:
     requests:
       storage: 20Gi

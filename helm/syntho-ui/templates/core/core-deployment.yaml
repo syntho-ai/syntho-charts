@@ -73,28 +73,29 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           resources:
             limits:
-              cpu: "2000m"
+              cpu: "1000m"
               ephemeral-storage: "3Gi"
               memory: "3Gi"
             requests:
-              cpu: "2000m"
+              cpu: "500m"
               ephemeral-storage: "3Gi"
               memory: "2Gi"
           readinessProbe:
             httpGet:
               path: /api/v1/status
               port: {{ .Values.core.port }}
-            initialDelaySeconds: 20
-            periodSeconds: 10
+            initialDelaySeconds: 120
+            periodSeconds: 30
             successThreshold: 1
+            failureThreshold: 3
           livenessProbe:
             httpGet:
               path: /api/v1/status
               port: {{ .Values.core.port }}
-            initialDelaySeconds: 30
-            timeoutSeconds: 3
-            periodSeconds: 5
-            failureThreshold: 1
+            initialDelaySeconds: 240
+            periodSeconds: 30
+            successThreshold: 1
+            failureThreshold: 3
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}

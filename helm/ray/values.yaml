@@ -14,8 +14,11 @@ operatorImage:
   pullPolicy: IfNotPresent
 
 image:
-  repository: rayproject/ray
-  tag: latest-py310-cpu-aarch64
+  # replace them if it is being tested on ARM chip
+  # repository: rayproject/ray
+  # tag: latest-py310-cpu-aarch64
+  repository: syntho.azurecr.io/syntho-ray
+  tag: latest-cpu
   pullPolicy: IfNotPresent
 
 head:
@@ -222,8 +225,10 @@ nameOverride: "kuberay"
 fullnameOverride: "kuberay-operator"
 
 storage:
+  pvLabelKey: # provide this if a manually crated PV is going to be used
   storageClassName: standard
-  accessMode: ReadWriteOnce
+  # accessMode: ReadWriteOnce
+  accessMode: ReadWriteMany
 
 serviceAccount:
   # Specifies whether a service account should be created

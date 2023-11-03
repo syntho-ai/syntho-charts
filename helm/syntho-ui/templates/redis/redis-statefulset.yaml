@@ -73,7 +73,13 @@ spec:
       resources:
         requests:
           storage: 1Gi
-      storageClassName: {{quote .Values.redis.storageClassName | default "default" }}
+      {{- if and (or (not .Values.redis.storageClassName) (eq .Values.redis.storageClassName "")) (not (or (not .Values.redis.pvLabelKey) (eq .Values.redis.pvLabelKey ""))) }}
+      selector:
+        matchLabels:
+          pv-label-key: {{ .Values.redis.pvLabelKey }}
+      {{- else }}
+      storageClassName: {{ .Values.redis.storageClassName | default "default" }}
+      {{- end }}
   - metadata:
       name: redis-data
     spec:
@@ -81,4 +87,10 @@ spec:
       resources:
         requests:
           storage: 1Gi
-      storageClassName: {{quote .Values.redis.storageClassName | default "default" }}
+      {{- if and (or (not .Values.redis.storageClassName) (eq .Values.redis.storageClassName "")) (not (or (not .Values.redis.pvLabelKey) (eq .Values.redis.pvLabelKey ""))) }}
+      selector:
+        matchLabels:
+          pv-label-key: {{ .Values.redis.pvLabelKey }}
+      {{- else }}
+      storageClassName: {{ .Values.redis.storageClassName | default "default" }}
+      {{- end }}

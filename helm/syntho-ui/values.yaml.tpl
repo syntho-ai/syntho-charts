@@ -3,16 +3,16 @@
 # Declare variables to be passed into your templates.
 
 frontend_path:
-frontend_url: syntho.company.com
-frontend_protocol: http
+frontend_url: {{ DOMAIN }}
+frontend_protocol: {{ PROTOCOL }}
 
-SynthoLicense: "<put-your-own-license>"
+SynthoLicense: "{{ LICENSE_KEY }}"
 
 core:
   replicaCount: 1
   image:
-    repository: syntho.azurecr.io/syntho-core-api
-    tag: latest
+    repository: {{ SYNTHO_UI_CORE_IMG_REPO }}
+    tag: {{ SYNTHO_UI_CORE_IMG_VER }}
   name: core
   service:
     port: 8080
@@ -39,8 +39,8 @@ core:
 backend:
   replicaCount: 1
   image:
-    repository: syntho.azurecr.io/syntho-core-backend
-    tag: latest
+    repository: {{ SYNTHO_UI_BACKEND_IMG_REPO }}
+    tag: {{ SYNTHO_UI_BACKEND_IMG_VER }}
   name: backend
   port: 8000
   workers: 1
@@ -70,15 +70,15 @@ frontend:
   replicaCount: 1
   name: frontend
   image:
-    repository: syntho.azurecr.io/syntho-core-frontend
-    tag: latest
+    repository: {{ SYNTHO_UI_FRONTEND_IMG_REPO }}
+    tag: {{ SYNTHO_UI_FRONTEND_IMG_VER }}
   port: 3000
   service:
     port: 3000
   ingress:
     enabled: true
     name: frontend-ingress
-    className: nginx
+    className: {{ INGRESS_CONTROLLER }}
     annotations: {
       nginx.ingress.kubernetes.io/session-cookie-path: "/",
       nginx.ingress.kubernetes.io/use-regex: "true",
@@ -90,7 +90,7 @@ frontend:
       nginx.ingress.kubernetes.io/proxy-body-size: "512m",
     }
     hosts:
-      - host: syntho.company.com
+      - host: {{ DOMAIN }}
         paths:
           - path: /
             pathType: Prefix
@@ -98,24 +98,24 @@ frontend:
     tls:
       conf:
         - hosts:
-          - syntho.company.com
+          - {{ DOMAIN }}
           secretName: frontend-tls
-      enabled: false
+      enabled: {{ TLS_ENABLED }}
 
 db:
   image:
     repository: syntho.azurecr.io/postgres
     tag: latest
-  storageClassName: "default"
-  pvLabelKey: ""
+  storageClassName: "{{ STORAGE_CLASS_NAME }}"
+  pvLabelKey: "{{ PV_LABEL_KEY }}"
 
 redis:
   replicaCount: 1
   image:
     repository: redis
     tag: 7.2-rc2
-  storageClassName: "default"
-  pvLabelKey: ""
+  storageClassName: "{{ STORAGE_CLASS_NAME }}"
+  pvLabelKey: "{{ PV_LABEL_KEY }}"
 
 imagePullSecrets:
   - name: syntho-cr-secret
@@ -176,7 +176,7 @@ tolerations: []
 ## By default we don't set affinity
 affinity: {}
 
-# affinity: 
+# affinity:
 #  podAffinity:
 #    preferredDuringSchedulingIgnoredDuringExecution:
 #     - weight: 50

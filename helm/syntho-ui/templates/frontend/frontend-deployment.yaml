@@ -53,10 +53,6 @@ spec:
               value: {{ .Values.frontend_path }}
             - name: BACKEND_HOST
               value: {{ .Values.backend.name }}.syntho.svc.cluster.local
-          {{- if .Values.frontend.ingress.tls.selfSignedSSLCertificate }}
-            - name: _JAVA_OPTIONS
-              value: "-Dio.swagger.parser.util.RemoteUrl.trustAll=true -Dio.swagger.v3.parser.util.RemoteUrl.trustAll=true"
-          {{- end }}
           {{- if or $.Values.frontend.env $.Values.frontend.envSecrets }}
             {{- range $key, $value := $.Values.frontend.env }}
             - name: {{ $key }}

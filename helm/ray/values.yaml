@@ -226,8 +226,7 @@ fullnameOverride: "kuberay-operator"
 
 storage:
   pvLabelKey: # provide this if a manually crated PV is going to be used
-  storageClassName: standard
-  # accessMode: ReadWriteOnce
+  storageClassName: default
   accessMode: ReadWriteMany
 
 serviceAccount:

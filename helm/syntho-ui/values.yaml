@@ -12,7 +12,7 @@ core:
   replicaCount: 1
   image:
     repository: syntho.azurecr.io/syntho-core-api
-    tag: 0.45.1
+    tag: latest
   name: core
   service:
     port: 8080
@@ -40,7 +40,7 @@ backend:
   replicaCount: 1
   image:
     repository: syntho.azurecr.io/syntho-core-backend
-    tag: 0.30.0
+    tag: latest
   name: backend
   port: 8000
   workers: 1
@@ -71,7 +71,7 @@ frontend:
   name: frontend
   image:
     repository: syntho.azurecr.io/syntho-core-frontend
-    tag: 1.26.0
+    tag: latest
   port: 3000
   service:
     port: 3000
@@ -101,20 +101,19 @@ frontend:
           - syntho.company.com
           secretName: frontend-tls
       enabled: false
-      selfSignedSSLCertificate: false
 
 db:
   image:
     repository: syntho.azurecr.io/postgres
     tag: latest
-  storageClassName: standard
+  storageClassName: default
 
 redis:
   replicaCount: 1
   image:
     repository: redis
     tag: 7.2-rc2
-  storageClassName: standard
+  storageClassName: default
 
 imagePullSecrets:
   - name: syntho-cr-secret

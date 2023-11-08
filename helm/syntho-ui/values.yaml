@@ -2,11 +2,11 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-frontend_path: 
+frontend_path:
 frontend_url: syntho.company.com
-frontend_protocol: https
+frontend_protocol: http
 
-SynthoLicense: 
+SynthoLicense: "<put-your-own-license>"
 
 core:
   replicaCount: 1
@@ -20,7 +20,7 @@ core:
   volumes: []
   volumeMounts: []
   database_enabled: true
-  celery_args: ['-A', 'app.celery', 'worker', '--loglevel=info', '--concurrency=4', '--max-memory-per-child=50000']
+  celery_args: ['-A', 'app.celery', 'worker', '--loglevel=info', '--concurrency=1', '--max-memory-per-child=50000']
   db:
     username: postgres
     password: postgres
@@ -28,13 +28,13 @@ core:
     host: postgres
     port: 5432
   port: 8080
-  secret_key: abcd12412
+  secret_key: ZzXj2az_fnnM59mviJc0hmU_jhcdIVaI51dbEkuiXLk=
   redis:
     host: redis-svc
     port: 6379
     db: 1
-  ray_address: ray-cluster-head-svc
-  workers: 2
+  ray_address: ray-cluster-head-svc.syntho.svc.cluster.local
+  workers: 1
 
 backend:
   replicaCount: 1
@@ -43,8 +43,8 @@ backend:
     tag: latest
   name: backend
   port: 8000
-  workers: 4
-  secret_key: secret-key-change-this-into-something-much-more-safe
+  workers: 1
+  secret_key: ix!57KPgpcyu!&2mMn69pB#R8zLhxLXAexnNoF!XZvqHB9G4JG%QLmFnE8Rx^3bMF#EG7rAxnWK*7LzKWF8S62qbTC
   redis:
     host: redis-svc
     port: 6379
@@ -94,16 +94,19 @@ frontend:
         paths:
           - path: /
             pathType: Prefix
-    
+
     tls:
-      - hosts:
-        - syntho.company.com
-        secretName: frontend-tls
+      conf:
+        - hosts:
+          - syntho.company.com
+          secretName: frontend-tls
+      enabled: false
 
 db:
   image:
     repository: syntho.azurecr.io/postgres
     tag: latest
+  storageClassName: default
 
 redis:
   replicaCount: 1
@@ -112,8 +115,8 @@ redis:
     tag: 7.2-rc2
   storageClassName: default
 
-imagePullSecrets: 
-  - name: <synthoImageSecret>
+imagePullSecrets:
+  - name: syntho-cr-secret
 nameOverride: ""
 fullnameOverride: ""
 

@@ -1,7 +1,7 @@
 # Default values for kuberay-operator.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
-SynthoLicense: "<put-your-own-license>"
+SynthoLicense: "{{ LICENSE_KEY }}"
 
 clustername: ray-cluster
 
@@ -9,16 +9,16 @@ imagePullSecrets:
   - name: syntho-cr-secret
 
 operatorImage:
-  repository: syntho.azurecr.io/syntho-ray-operator
-  tag: latest
+  repository: {{ RAY_OPERATOR_IMG_REPO }}
+  tag: {{ RAY_OPEARATOR_IMG_TAG }}
   pullPolicy: IfNotPresent
 
 image:
   # replace them if it is being tested on ARM chip
   # repository: rayproject/ray
   # tag: latest-py310-cpu-aarch64
-  repository: syntho.azurecr.io/syntho-ray
-  tag: latest-cpu
+  repository: {{ RAY_IMAGE_IMG_REPO }}
+  tag: {{ RAY_IMAGE_IMG_TAG }}
   pullPolicy: IfNotPresent
 
 head:
@@ -72,12 +72,12 @@ head:
   # for further guidance.
   resources:
     limits:
-      cpu: "1000m"
+      cpu: "{{ RAY_HEAD_CPU_LIMIT }}"
       # To avoid out-of-memory issues, never allocate less than 2G memory for the Ray head.
-      memory: "4G"
+      memory: "{{ RAY_HEAD_MEMORY_LIMIT }}"
     requests:
-      cpu: "500m"
-      memory: "2G"
+      cpu: "{{ RAY_HEAD_CPU_REQUESTS }}"
+      memory: "{{ RAY_HEAD_MEMORY_REQUESTS }}"
   annotations: {}
   nodeSelector: {}
   tolerations: []
@@ -140,7 +140,7 @@ worker:
       memory: "4G"
     requests:
       cpu: "500m"
-      memory: "2G"
+      memory: "1G"
   annotations: {}
   nodeSelector: {}
   tolerations: []
@@ -225,9 +225,9 @@ nameOverride: "kuberay"
 fullnameOverride: "kuberay-operator"
 
 storage:
-  pvLabelKey: ""
-  storageClassName: "default"
-  accessMode: ReadWriteMany
+  pvLabelKey: "{{ PV_LABEL_KEY }}"
+  storageClassName: "{{ STORAGE_CLASS_NAME }}"
+  accessMode: {{ STORAGE_ACCESS_MODE }}
 
 serviceAccount:
   # Specifies whether a service account should be created

@@ -25,10 +25,13 @@ services:
       test: wget --no-verbose --tries=1 -O /dev/null http://localhost:${CORE_PORT}/api/v1/status || exit 1
       interval: 5s
       timeout: 1s
-      retries: 30
+      retries: 2
+      start_period: 60s
     depends_on:
-      - redis
-      - postgres
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
 
   core_worker:
     image: ${CORE_IMAGE}
@@ -50,8 +53,10 @@ services:
     # Uncomment if volumes are required
     #  - /krb/krb5.conf:/etc/krb5.conf
     depends_on:
-      - redis
-      - postgres
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
 
   backend:
     image: ${BACKEND_IMAGE}
@@ -83,14 +88,18 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      redis:
+        condition: service_healthy
     healthcheck:
       test: wget --no-verbose --tries=1 -O /dev/null http://backend:8000/api/docs/ || exit 1
       interval: 5s
       timeout: 1s
-      retries: 30
+      retries: 2
+      start_period: 60s
 
   worker:
     image: ${BACKEND_IMAGE}
+    restart: on-failure
     entrypoint: [python, manage.py, subscriber]
     environment:
       FRONTEND_URL: ${FRONTEND_PROTOCOL}://${FRONTEND_HOST}
@@ -106,6 +115,11 @@ services:
       DB_USER: ${BACKEND_DB_USER}
       DB_PASSWORD: ${BACKEND_DB_PASSWORD}
       DB_PORT: ${BACKEND_DB_PORT}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
 
   frontend:
     image: ${FRONTEND_IMAGE}
@@ -117,12 +131,13 @@ services:
     ports:
       - "${FRONTEND_PORT}:${FRONTEND_PORT}"
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:${FRONTEND_PORT}"]
       interval: 5s
       timeout: 1s
-      retries: 30
+      retries: 3
 
   postgres:
     image: postgres:14.5
@@ -143,6 +158,8 @@ services:
 
   redis:
     image: redis:6.2-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli","ping"]
 
   head:
     image: ${RAY_IMAGE}

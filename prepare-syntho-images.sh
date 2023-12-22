@@ -1,7 +1,9 @@
 #!/bin/bash
 
 if [ "$#" -lt 2 ]; then
-  echo "Usage: $0 --mode <save/load> --tag <tag> --path <path> \n Example: ./prepare-syntho-images.sh --mode save --tag latest --path /home/syntho/images"
+  echo "Usage: $0 --mode <save/load> --tag <tag> --path <path> 
+     Example: ./prepare-syntho-images.sh --mode save --tag latest --path /home/syntho/images
+     Example: ./prepare-syntho-images.sh --mode load --tag latest --path /home/syntho/images"
   exit 1
 fi
 

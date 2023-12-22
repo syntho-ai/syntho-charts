@@ -32,6 +32,21 @@ A repository containing all the relevant Helm charts and other related configura
 
 <!-- GETTING STARTED -->
 
+### Getting all images as .tar files locally
+
+Script `prepare-syntho-images.sh` has been prepared for convenience for a case where target enviroment does not have an access to internet. Script will save all images into single `syntho-images.tar` file (save mode), which can be moved to target machine and loaded there with the same script (load mode).
+
+#### Usage
+`/prepare-syntho-images.sh --mode <save/load> --tag <tag> --path <path>`
+
+#### Example saving images to local .tar file:
+
+`/prepare-syntho-images.sh --mode save --tag latest --path /home/syntho/images`
+
+#### Example loading images to local .tar file:
+
+`/prepare-syntho-images.sh --mode load --tag latest --path /home/syntho/images`
+
 ## Contact
 
 Syntho - info@syntho.ai

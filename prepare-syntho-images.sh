@@ -1,10 +1,9 @@
 #!/bin/bash
 
-# Function to display usage information
-usage() {
-  echo "Usage: $0 <save/load> <tag> <path> \n Example: prepare-syntho-images.sh save ${tag} /home/syntho/images"
+if [ "$#" -lt 2 ]; then
+  echo "Usage: $0 <save/load> <tag> <path> \n Example: prepare-syntho-images.sh save latest /home/syntho/images"
   exit 1
-}
+fi
 
 path="$3"
 if [ "${path: -1}" != "/" ]; then
@@ -35,8 +34,8 @@ if [ "$1" = "save" ]; then
     docker pull "syntho.azurecr.io/syntho-ray-operator:${tag}"
     docker save "syntho.azurecr.io/syntho-ray-operator:${tag}" > "${path}syntho-ray-operator.tar"
 
-    tar -cvf syntho-images.tar -C ${path} postgres.tar syntho-core-api.tar syntho-core-backend.tar syntho-core-frontend.tar syntho-ray.tar syntho-ray-operator.tar
-    rm "${path}postgres.tar" "${path}syntho-core-api.tar" "${path}syntho-core-backend.tar" "${path}syntho-core-frontend.tar" "${path}syntho-ray.tar" "${path}syntho-ray-operator.tar"
+    tar -cvf "${path}syntho-images.tar" -C ${path} postgres.tar syntho-core-api.tar syntho-core-backend.tar syntho-core-frontend.tar syntho-ray.tar syntho-ray-operator.tar
+    rm "${path}postgres.tar" "${path}redis.tar" "${path}syntho-core-api.tar" "${path}syntho-core-backend.tar" "${path}syntho-core-frontend.tar" "${path}syntho-ray.tar" "${path}syntho-ray-operator.tar"
 
 elif [ "$1" = "load" ]; then
 
@@ -49,5 +48,5 @@ elif [ "$1" = "load" ]; then
     docker load < "${path}syntho-ray.tar"
     docker load < "${path}syntho-ray-operator.tar"
 
-    rm "${path}postgres.tar" "${path}syntho-core-api.tar" "${path}syntho-core-backend.tar" "${path}syntho-core-frontend.tar" "${path}syntho-ray.tar" "${path}syntho-ray-operator.tar"
+    rm "${path}postgres.tar" "${path}redis.tar" "${path}syntho-core-api.tar" "${path}syntho-core-backend.tar" "${path}syntho-core-frontend.tar" "${path}syntho-ray.tar" "${path}syntho-ray-operator.tar"
 fi

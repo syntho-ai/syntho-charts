@@ -36,6 +36,10 @@ A repository containing all the relevant Helm charts and other related configura
 
 Script `prepare-syntho-images.sh` has been prepared for convenience for a case where target enviroment does not have an access to internet. Script will save all images into single `syntho-images.tar` file (save mode), which can be moved to target machine and loaded there with the same script (load mode).
 
+Script should have executable permissions set. If that is not the case please run the following command:
+
+`chmod +x prepare-syntho-images.sh`
+
 #### Usage
 `/prepare-syntho-images.sh --mode <save/load> --tag <tag> --path <path>`
 

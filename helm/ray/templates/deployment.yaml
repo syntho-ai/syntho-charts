@@ -37,7 +37,7 @@ spec:
           image: "{{ .Values.operatorImage.repository }}:{{ .Values.operatorImage.tag }}"
           imagePullPolicy: {{ .Values.operatorImage.pullPolicy }}
           volumeMounts: []
-          command: ["/manager", "-watch-namespace", "{{ .Release.Namespace }}"]
+          command: ["/manager", "-watch-namespace", "{{ .Release.Namespace }}", "-forced-cluster-upgrade", "true"]
           args:
           {{- if .Values.batchScheduler.enabled }}
             - --enable-batch-scheduler

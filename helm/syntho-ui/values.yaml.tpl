@@ -60,8 +60,8 @@ backend:
     port: 5432
   user:
     username: admin
-    password: password
-    email: admin@company.com
+    password: {{ UI_LOGIN_PASSWORD }}
+    email: {{ UI_LOGIN_EMAIL }}
   volumes: []
   volumeMounts: []
 

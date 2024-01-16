@@ -23,9 +23,9 @@ services:
     #  - /krb/krb5.conf:/etc/krb5.conf
     healthcheck:
       test: wget --no-verbose --tries=1 -O /dev/null http://localhost:${CORE_PORT}/api/v1/status || exit 1
-      interval: 5s
-      timeout: 1s
-      retries: 2
+      interval: 10s
+      timeout: 2s
+      retries: 5
       start_period: 60s
     depends_on:
       redis:
@@ -92,9 +92,9 @@ services:
         condition: service_healthy
     healthcheck:
       test: wget --no-verbose --tries=1 -O /dev/null http://backend:8000/api/docs/ || exit 1
-      interval: 5s
-      timeout: 1s
-      retries: 2
+      interval: 30s
+      timeout: 2s
+      retries: 10
       start_period: 60s
 
   worker:
@@ -135,9 +135,10 @@ services:
         condition: service_healthy
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:${FRONTEND_PORT}"]
-      interval: 5s
-      timeout: 1s
-      retries: 3
+      interval: 10s
+      timeout: 2s
+      retries: 5
+      start_period: 60s
 
   postgres:
     image: postgres:14.5
@@ -192,6 +193,7 @@ services:
 
 volumes:
   database-data:
+    external: false
 
 networks:
   default:

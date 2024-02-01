@@ -104,8 +104,8 @@ frontend:
 
 db:
   image:
-    repository: syntho.azurecr.io/postgres
-    tag: latest
+    repository: postgres
+    tag: 14.5
   storageClassName: "{{ STORAGE_CLASS_NAME }}"
   pvLabelKey: "{{ PV_LABEL_KEY }}"
 

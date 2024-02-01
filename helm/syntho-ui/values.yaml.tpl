@@ -104,8 +104,8 @@ frontend:
 
 db:
   image:
-    repository: postgres
-    tag: 14.5
+    repository: {{ POSTGRES_IMG_REPO }}
+    tag: {{ POSTGRES_IMG_VER }}
   storageClassName: "{{ STORAGE_CLASS_NAME }}"
   pvLabelKey: "{{ PV_LABEL_KEY }}"
 

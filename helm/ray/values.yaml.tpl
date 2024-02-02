@@ -45,7 +45,7 @@ head:
     #     memory: "512Mi"
   init_container_enabled: true
   initContainer:
-    arguments: ["chown", "-R", "777", "/tmp/ray-workflows"]
+    arguments: ["chmod", "-R", "777", "/tmp/ray-workflows"]
     securityContext: {}
   labels: {}
   rayStartParams:

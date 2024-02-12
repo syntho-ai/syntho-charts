@@ -188,7 +188,7 @@ services:
           cpus: '${RAY_CPUS}'
           memory: ${RAY_MEMORY}
     command: >
-      ray start --head --port=6379 --no-monitor --dashboard-host 0.0.0.0 --block --disable-usage-stats --storage=/tmp
+      ray start --head --port=6379 --dashboard-host 0.0.0.0 --block --disable-usage-stats --storage=/tmp
 
 volumes:
   database-data:

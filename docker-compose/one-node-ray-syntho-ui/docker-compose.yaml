@@ -25,7 +25,7 @@ services:
       test: wget --no-verbose --tries=1 -O /dev/null http://localhost:${CORE_PORT}/api/v1/status || exit 1
       interval: 10s
       timeout: 2s
-      retries: 5
+      retries: 3
       start_period: 60s
     depends_on:
       redis:
@@ -92,10 +92,10 @@ services:
         condition: service_healthy
     healthcheck:
       test: wget --no-verbose --tries=1 -O /dev/null http://backend:8000/api/docs/ || exit 1
-      interval: 30s
+      interval: 10s
       timeout: 2s
-      retries: 10
-      start_period: 60s
+      retries: 3
+      start_period: 80s
 
   worker:
     image: ${BACKEND_IMAGE}

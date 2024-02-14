@@ -60,8 +60,8 @@ backend:
     port: 5432
   user:
     username: admin
-    password: password
-    email: admin@company.com
+    password: {{ UI_LOGIN_PASSWORD }}
+    email: {{ UI_LOGIN_EMAIL }}
   volumes: []
   volumeMounts: []
 
@@ -104,8 +104,8 @@ frontend:
 
 db:
   image:
-    repository: syntho.azurecr.io/postgres
-    tag: latest
+    repository: {{ POSTGRES_IMG_REPO }}
+    tag: {{ POSTGRES_IMG_VER }}
   storageClassName: "{{ STORAGE_CLASS_NAME }}"
   pvLabelKey: "{{ PV_LABEL_KEY }}"
 

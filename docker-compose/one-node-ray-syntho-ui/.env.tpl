@@ -51,3 +51,6 @@ BACKEND_DATA_ACCESS=True
 # If CORE_APP_ENV is set to prod, CORE_RAY_ADDRESS cannot be empty
 # Set to dev for testing purposes
 CORE_APP_ENV=prod
+
+POSTGRES_IMAGE={{ POSTGRES_IMG_REPO }}:{{ POSTGRES_IMG_TAG }}
+REDIS_IMAGE={{ REDIS_IMG_REPO }}:{{ REDIS_IMG_TAG }}

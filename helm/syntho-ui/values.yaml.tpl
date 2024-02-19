@@ -12,7 +12,7 @@ core:
   replicaCount: 1
   image:
     repository: {{ SYNTHO_UI_CORE_IMG_REPO }}
-    tag: {{ SYNTHO_UI_CORE_IMG_VER }}
+    tag: {{ SYNTHO_UI_CORE_IMG_TAG }}
   name: core
   service:
     port: 8080
@@ -40,7 +40,7 @@ backend:
   replicaCount: 1
   image:
     repository: {{ SYNTHO_UI_BACKEND_IMG_REPO }}
-    tag: {{ SYNTHO_UI_BACKEND_IMG_VER }}
+    tag: {{ SYNTHO_UI_BACKEND_IMG_TAG }}
   name: backend
   port: 8000
   workers: 1
@@ -71,7 +71,7 @@ frontend:
   name: frontend
   image:
     repository: {{ SYNTHO_UI_FRONTEND_IMG_REPO }}
-    tag: {{ SYNTHO_UI_FRONTEND_IMG_VER }}
+    tag: {{ SYNTHO_UI_FRONTEND_IMG_TAG }}
   port: 3000
   service:
     port: 3000
@@ -105,15 +105,15 @@ frontend:
 db:
   image:
     repository: {{ POSTGRES_IMG_REPO }}
-    tag: {{ POSTGRES_IMG_VER }}
+    tag: {{ POSTGRES_IMG_TAG }}
   storageClassName: "{{ STORAGE_CLASS_NAME }}"
   pvLabelKey: "{{ PV_LABEL_KEY }}"
 
 redis:
   replicaCount: 1
   image:
-    repository: redis
-    tag: 7.2-rc2
+    repository: {{ REDIS_IMG_REPO }}
+    tag: {{ REDIS_IMG_TAG }}
   storageClassName: "{{ STORAGE_CLASS_NAME }}"
   pvLabelKey: "{{ PV_LABEL_KEY }}"
 

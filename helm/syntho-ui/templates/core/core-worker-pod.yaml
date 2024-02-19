@@ -76,16 +76,16 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           resources:
             limits:
-              cpu: "1000m"
+              cpu: "1250m"
               ephemeral-storage: "3Gi"
-              memory: "750Mi"
+              memory: "1000Mi"
             requests:
               cpu: "1000m"
               ephemeral-storage: "3Gi"
               memory: "750Mi"
           readinessProbe:
-            initialDelaySeconds: 30
-            periodSeconds: 10
+            initialDelaySeconds: 120
+            periodSeconds: 30
             timeoutSeconds: 10
             exec:
               command:
@@ -93,8 +93,8 @@ spec:
               - "-c"
               - "celery -b redis://{{ .Values.core.redis.host}}:{{ .Values.core.redis.port }}/{{ .Values.core.redis.db }} inspect ping -d celery@$HOSTNAME"
           livenessProbe:
-            initialDelaySeconds: 30
-            periodSeconds: 10
+            initialDelaySeconds: 90
+            periodSeconds: 30
             timeoutSeconds: 10
             exec:
               command:

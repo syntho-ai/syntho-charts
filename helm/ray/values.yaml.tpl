@@ -10,7 +10,7 @@ imagePullSecrets:
 
 operatorImage:
   repository: {{ RAY_OPERATOR_IMG_REPO }}
-  tag: {{ RAY_OPEARATOR_IMG_TAG }}
+  tag: {{ RAY_OPERATOR_IMG_TAG }}
   pullPolicy: IfNotPresent
 
 image:

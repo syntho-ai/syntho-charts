@@ -118,7 +118,7 @@ redis:
   pvLabelKey: "{{ PV_LABEL_KEY }}"
 
 imagePullSecrets:
-  - name: syntho-cr-secret
+  - name: {{ IMAGE_PULL_SECRET }}
 nameOverride: ""
 fullnameOverride: ""
 

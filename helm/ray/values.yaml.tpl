@@ -6,11 +6,11 @@ SynthoLicense: "{{ LICENSE_KEY }}"
 clustername: ray-cluster
 
 imagePullSecrets:
-  - name: syntho-cr-secret
+  - name: {{ IMAGE_PULL_SECRET }}
 
 operatorImage:
   repository: {{ RAY_OPERATOR_IMG_REPO }}
-  tag: {{ RAY_OPEARATOR_IMG_TAG }}
+  tag: {{ RAY_OPERATOR_IMG_TAG }}
   pullPolicy: IfNotPresent
 
 image:

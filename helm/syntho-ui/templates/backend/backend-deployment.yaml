@@ -61,7 +61,7 @@ spec:
             - name: WORKERS
               value: {{quote .Values.backend.workers }}
             - name: EXTRA_ALLOWED_HOSTS
-              value: "{{ .Values.frontend_url }} {{ .Values.backend.name }}.syntho.svc.cluster.local"
+              value: "{{ .Values.frontend_url }} {{ .Values.backend.name }}.{{ .Release.Namespace }}.svc.cluster.local"
           {{- if or $.Values.backend.env $.Values.backend.envSecrets }}
             {{- range $key, $value := $.Values.backend.env }}
             - name: {{ $key }}

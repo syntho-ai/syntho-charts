@@ -30,7 +30,7 @@ spec:
   {{- end }}
   {{- if .Values.frontend.ingress.tls.enabled }}
   tls:
-    {{- range .Values.frontend.ingress.conf.tls }}
+    {{- range .Values.frontend.ingress.tls.conf }}
     - hosts:
         {{- range .hosts }}
         - {{ . | quote }}

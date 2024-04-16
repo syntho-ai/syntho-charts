@@ -29,7 +29,10 @@ spec:
             - name: SYNTHO_WEBSOCKET_URL
               value: ws://{{ .Values.core.name }}-service:{{ .Values.core.service.port }}/websocket/
             - name: SECRET_KEY
-              value: {{ .Values.backend.secret_key }}
+              valueFrom:
+                secretKeyRef:
+                  name: backend-secret
+                  key: backend.secret_key
             - name: DJANGO_PRODUCTION
               value: "True"
             - name: REDIS_HOST
@@ -39,7 +42,10 @@ spec:
             - name: REDIS_DB_INDEX
               value: {{quote .Values.backend.redis.db }}
             - name: USER_PASSWORD
-              value: {{quote .Values.backend.user.password }}
+              valueFrom:
+                secretKeyRef:
+                  name: backend-secret
+                  key: backend.user.password
             - name: USER_NAME
               value: {{quote .Values.backend.user.username | default "admin" }}
             - name: USER_EMAIL
@@ -53,7 +59,10 @@ spec:
             - name: DB_USER
               value: {{quote .Values.backend.db.user }}
             - name: DB_PASSWORD
-              value: {{quote .Values.backend.db.password }}
+              valueFrom:
+                secretKeyRef:
+                  name: backend-secret
+                  key: backend.db.password
             - name: DATA_ACCESS
               value: {{.Values.backend.data_access | default "true" | quote }}
             - name: RAY_URL
@@ -97,10 +106,8 @@ spec:
               httpHeaders:
               - name: Host
                 value: {{ .Values.frontend_url }}
-            initialDelaySeconds: 120
-            timeoutSeconds: 30
-            periodSeconds: 30
-            failureThreshold: 3
+            initialDelaySeconds: 10
+            periodSeconds: 60
             successThreshold: 1
           livenessProbe:
             httpGet:
@@ -109,11 +116,10 @@ spec:
               httpHeaders:
               - name: Host
                 value: {{ .Values.frontend_url }}
-            initialDelaySeconds: 240
-            timeoutSeconds: 30
-            periodSeconds: 30
-            failureThreshold: 3
-            successThreshold: 1
+            initialDelaySeconds: 60
+            timeoutSeconds: 10
+            periodSeconds: 10
+            failureThreshold: 2
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
@@ -162,7 +168,10 @@ spec:
           - name: SYNTHO_WEBSOCKET_URL
             value: ws://{{ .Values.core.name }}-service:{{ .Values.core.service.port }}/websocket/
           - name: SECRET_KEY
-            value: {{ .Values.backend.secret_key }}
+            valueFrom:
+                secretKeyRef:
+                  name: backend-secret
+                  key: backend.secret_key
           - name: DJANGO_PRODUCTION
             value: "True"
           - name: REDIS_HOST
@@ -172,7 +181,10 @@ spec:
           - name: REDIS_DB_INDEX
             value: {{quote .Values.backend.redis.db }}
           - name: USER_PASSWORD
-            value: {{quote .Values.backend.user.password }}
+            valueFrom:
+                secretKeyRef:
+                  name: backend-secret
+                  key: backend.user.password
           - name: USER_NAME
             value: {{quote .Values.backend.user.username | default "admin" }}
           - name: USER_EMAIL
@@ -186,7 +198,10 @@ spec:
           - name: DB_USER
             value: {{quote .Values.backend.db.user }}
           - name: DB_PASSWORD
-            value: {{quote .Values.backend.db.password }}
+            valueFrom:
+                secretKeyRef:
+                  name: backend-secret
+                  key: backend.db.password
         {{- if or $.Values.backend.env $.Values.backend.envSecrets }}
           {{- range $key, $value := $.Values.backend.env }}
           - name: {{ $key }}

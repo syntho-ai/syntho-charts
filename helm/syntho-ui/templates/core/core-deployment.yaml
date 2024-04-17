@@ -27,15 +27,19 @@ spec:
             - name: APP_ENV
               value: {{ .Values.core.app_env | default "prod" }}
             - name: DATABASE_URL
-              value: "postgresql+asyncpg://{{ .Values.core.db.username }}:{{ .Values.core.db.password }}@{{ .Values.core.db.host }}:{{ .Values.core.db.port | default "5432" }}/{{ .Values.core.db.name }}"
+              valueFrom:
+                secretKeyRef:
+                  name: core-secret
+                  key: core.database_url 
             - name: PORT
               value: {{quote .Values.core.port }}
             - name: SECRET_KEY
-              value: {{quote .Values.core.secret_key }}
+              valueFrom:
+                secretKeyRef:
+                  name: core-secret
+                  key: core.secret_key
             - name: WORKER_TIMEOUT
               value: "{{ .Values.core.worker_timeout | default "3000" }}"
-            - name: SECRET_KEY_2
-              value: {{quote .Values.core.secret_key }}
             - name: CELERY_BROKER_URL
               value:  "redis://{{ .Values.core.redis.host}}:{{ .Values.core.redis.port }}/{{ .Values.core.redis.db }}"
             - name: CELERY_RESULT_BACKEND

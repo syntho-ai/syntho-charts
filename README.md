@@ -1,3 +1,5 @@
+**NOTE**: _This repository is no longer being updated. Please visit [deployment-tools](https://github.com/syntho-ai/deployment-tools) for the up to date Docker Compose files and Helm charts_
+
 <div id="top"></div>
 
 <!-- PROJECT LOGO -->
